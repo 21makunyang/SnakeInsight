@@ -1,0 +1,8 @@
+# spider config
+RANDOM_SLEEP = True
+RANDOM_SLEEP_MIN = 1
+RANDOM_SLEEP_MAX = 3
+
+# log config
+LOGGING_LEVEL = 'INFO'
+ENTRY_DEBUG = False
