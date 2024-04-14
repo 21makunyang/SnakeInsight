@@ -3,3 +3,4 @@
 /snake_insight/tmp/*
 /snake_insight/log/*
 /snake_insight_threading/
+/snake-insight-web/.vscode/
