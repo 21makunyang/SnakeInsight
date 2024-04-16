@@ -1,6 +1,5 @@
 /.idea
 
-/snake_insight/tmp/*
-/snake_insight/log/*
-/snake_insight_threading/
+/snake_insight*/tmp/*
+/snake_insight*/log/*
 /snake-insight-web/.vscode/
