@@ -28,6 +28,7 @@ class Task(object):
         self.group = group
         # 解析器
         self.parser_index = 0 if parser_index is None else parser_index
+        # 将parser_sequence转为列表
         if isinstance(parser_sequence, str):
             self.parser_sequence = [parser_sequence]
         else:
