@@ -11,6 +11,9 @@ class RedisCommand(object):
     def redis(self):
         return redis.Redis(connection_pool=self.__pool)
 
+    def pipeline(self, transaction: bool = True, shard_hint = None):
+        return self.redis.pipeline(transaction, shard_hint)
+
     def hset(self, info: HouseInfo):
         self.redis.hset(name=info.id, mapping=info.__dict__)
 
@@ -34,3 +37,9 @@ class RedisCommand(object):
 
         """
         return self.redis.scan_iter(match, count, _type)
+
+    def sadd(self, key: str, values: bytes | memoryview | str | int | float):
+        self.redis.sadd(key, values)
+
+    def smembers(self, key: str):
+        return self.redis.smembers(key)
