@@ -1,0 +1,14 @@
+.nav-menu {
+    border-bottom: none !important;
+    text-decoration: none;
+    width: 500px;
+}
+
+.nav-menu-option:hover {
+    color: var(--el-menu-hover-text-color) !important;
+    background-color: var(--el-menu-bg-color) !important;
+}
+
+.nav-menu-option:focus {
+    background-color: var(--el-menu-bg-color) !important;
+}
