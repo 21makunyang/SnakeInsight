@@ -41,7 +41,7 @@ class Filter(object):
         for house_info in self.city_infos:
             living_room = house_info.get('living_room')
             bedroom = house_info.get('bedroom')
-            price = house_info.get('price')
+            price = float(house_info.get('price'))
 
             statisticians = statisticians_result.get((living_room, bedroom),[0, price, price, 0])
             statisticians[0] += price
