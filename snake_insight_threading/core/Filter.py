@@ -1,7 +1,8 @@
 import math
 import re
 import time
-import numpy as np
+
+from snake_insight_threading.common import PredictByType
 from snake_insight_threading.util import RedisCommand
 
 
@@ -10,6 +11,7 @@ class Filter(object):
     redis = RedisCommand(db=1)
     city_infos = []
     last_region = ''
+    predict_base = {}
 
     def __init__(self, region=None):
         self.get_city_info_by_area(region)
@@ -51,7 +53,7 @@ class Filter(object):
 
                 self.city_infos.append(house_info_utf8)
 
-        self.last_area = region
+        self.last_region = region
         return self.city_infos
 
     def get_room_price(self, region=None):
@@ -184,14 +186,91 @@ class Filter(object):
             statisticians[2] = min(price, statisticians[2])
             statisticians[3] += 1
 
+            statisticians_result[tuple_k] = statisticians
+
         # 计算平均价格
         for k in statisticians_result:
             statisticians_result[k][0] = statisticians_result[k][0] / statisticians_result[k][3]
 
+    def get_distribution_by_area(self, region):
+        self.__init_before_process(region)
+        statisticians_result = {}
+
+        for house_info in self.city_infos:
+            area = house_info.get('area')
+
+            tuple_k = (area,)
+            statisticians_result[tuple_k] = statisticians_result.get(tuple_k, [0])[0] + 1
+
+        return statisticians_result
+
+    def get_predict_base(self, region):
+        if self.predict_base and (region is None or region == self.last_region):
+            return self.predict_base
+        self.__init_before_process(region)
+        self.predict_base = {}
+
+        for house_info in self.city_infos:
+            floor = house_info.get('floor')
+            if floor is None or floor == '':
+                continue
+            area_ = house_info.get('area')
+            has_elevator = house_info.get('has_elevator')
+            living_room = house_info.get('living_room')
+            bedroom = house_info.get('bedroom')
+            space_ = float(house_info.get('space'))
+
+            price_ = float(house_info.get('price'))
+            price_per_square = price_ / space_
+
+            level_dic = {'低': 1 / 6, '中': 1 / 2, '高': 5 / 6}
+            level = level_dic.get(floor[0], 0.0)
+
+            total = re.search(r'共([0-9]+)层', floor)
+            if total is None:
+                continue
+            else:
+                total = float(total.group(1))
+            floor = math.ceil(total * level)
+
+            tuple_k = (area_, floor, has_elevator, living_room, bedroom)
+            statisticians = self.predict_base.get(tuple_k, [0, price_per_square, price_per_square, 0])
+            statisticians[0] += price_per_square
+            statisticians[1] = max(price_per_square, statisticians[1])
+            statisticians[2] = min(price_per_square, statisticians[2])
+            statisticians[3] += 1
+
+            self.predict_base[tuple_k] = statisticians
+
+        # 计算平均价格
+        for k in self.predict_base:
+            self.predict_base[k][0] = self.predict_base[k][0] / self.predict_base[k][3]
+
+        return self.predict_base
+
+    def predict_price(self, area, floor, has_elevator, living_room, bed_room, space):
+        return self.predict_base.get((area, floor, has_elevator, living_room, bed_room), -1) * space
+
+    def predict_space(self, area, floor, has_elevator, living_room, bed_room, price):
+        return price / self.predict_base.get((area, floor, has_elevator, living_room, bed_room), -1)
+
+    def predict(self, region, area, floor, has_elevator, living_room, bed_room, predict_by_type: PredictByType, value):
+        self.get_predict_base(region)
+        result = -1
+        if predict_by_type == PredictByType.PRICE:
+            result = self.predict_space(area, floor, has_elevator, living_room, bed_room, value)
+        else:
+            result = self.predict_price(area, floor, has_elevator, living_room, bed_room, value)
+
+        return result
+
+
 if __name__ == "__main__":
     filter = Filter()
     start = time.time()
-    res = filter.get_floor_price('海珠')
+    # res = filter.get_floor_price('海珠')
+    print(filter.get_predict_base('海珠'))
+    res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
     end = time.time()
     print(res)
     print('finished\ncost: {}'.format(str(end - start)))
