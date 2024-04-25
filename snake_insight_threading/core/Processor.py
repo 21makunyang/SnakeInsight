@@ -10,11 +10,17 @@ from snake_insight_threading.common import STOP_SIGNAL
 
 
 def _do_process(*args):
-    pass
+    newHouseInfo = []
+    for h in args:
+        if float(h.get('space')) < 1.0:
+            continue
+        newHouseInfo.append(h)
+    return newHouseInfo
 
 
 def do_process(task: Task) -> list[HouseInfo]:
-    return _do_process(task.target)
+    task.target = _do_process(task.target)
+    return task.target
 
 
 class Processor(threading.Thread):
@@ -34,6 +40,7 @@ class Processor(threading.Thread):
                 self.stop()
                 break
             self.work()
+            do_process(task)
             self.out_queue.put(task)
             self.free()
 
