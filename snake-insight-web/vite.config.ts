@@ -35,8 +35,6 @@ export default defineConfig({
       injectAtEnd: true,
       eslintrc: {
         enabled: true,
-        filePath: './eslintrc-auto-import.json',
-        globalsPropValue: true,
       }
     }),
     Components({ // 组件自动引入

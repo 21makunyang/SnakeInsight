@@ -7,12 +7,16 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ElHeader: typeof import('element-plus/es')['ElHeader']
+    AvgPrice: typeof import('./components/charts/AvgPrice.vue')['default']
+    ElCol: typeof import('element-plus/es')['ElCol']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElRow: typeof import('element-plus/es')['ElRow']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElText: typeof import('element-plus/es')['ElText']
     FloorPrice: typeof import('./components/charts/Floor-Price.vue')['default']
     GuangZhouMap: typeof import('./components/charts/GuangZhouMap.vue')['default']
+    NavBar: typeof import('./components/NavBar.vue')['default']
     RoomAmountPrice: typeof import('./components/charts/RoomAmount-Price.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -1,14 +1,30 @@
 <template>
   <el-scrollbar height="100vh">
-    <el-header style="width: 100vh;">
-      <el-menu mode="horizontal" class="nav-menu">
-        <el-menu-item index="1" class="nav-menu-option">数据展示</el-menu-item>
-        <el-menu-item index="2" class="nav-menu-option">房型预估</el-menu-item>
-        <el-menu-item index="3" class="nav-menu-option">价格估计</el-menu-item>
-      </el-menu>
-    </el-header>
+    <nav-bar />
+        <el-row>
+          <el-col :lg="8" :md="10" :sm="24" class="map-col">
+            <guang-zhou-map />
+          </el-col>
+          <el-col :lg="16" :md="14" :sm="24">
+            <el-row>
+              <el-col :lg="8" :md="12" :sm="24">
+                <avg-price />
+              </el-col>
+              <el-col :lg="8" :md="12" :sm="24">
+                <avg-price />
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
   </el-scrollbar>
 </template>
 
 <script setup>
 </script>
+
+<style scoped>
+/* .map-col{
+  margin: 0 40px;
+  height: 640px;
+} */
+</style>
