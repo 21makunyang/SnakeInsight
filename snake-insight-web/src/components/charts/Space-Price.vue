@@ -32,22 +32,28 @@ const options = reactive({
       ['增城区', 1929.85],
       ['从化区', 1939.32],
       ['荔湾区', 3566.63],
-      ['广州周边',3453.74]
+      ['广州周边', 3453.74]
     ]
   },
   // 声明一个 X 轴，数值轴。默认情况下，每个系列会自动对应到 dataset 的每一列。
-  xAxis: { type:'value'},
+  xAxis: {type: 'value'},
   // 声明一个 Y 轴，数值轴。
-  yAxis: { type: 'value'},
+  yAxis: {type: 'value'},
   // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
-  series: [{ type: 'line', smooth: true,data: [] }]
+  series: [{
+    type: 'scatter',
+    data: [],
+    symbolSize: function (value) {
+      return 3;
+    }
+  }]
 })
 
-function  getDataSetSource() {
+function getDataSetSource() {
   // console.log(import.meta.env)
   // MESSAGE 传递Json格式数据要用POST方法
   $.post({
-    url: import.meta.env.VITE_API_BASE_URL+'/plot',
+    url: import.meta.env.VITE_API_BASE_URL + '/plot',
     // MESSAGE Json的编码格式
     contentType: 'application/json',
     async: true,
@@ -61,19 +67,20 @@ function  getDataSetSource() {
     success: (data: any) => {
       // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
       // MESSAGE 所以理论上不要用这个interface
-      // console.log(data)
+      console.log(data)
       const plotDict = data.plotData[0].value
       options.series[0].data = [['面积', '每平方米价格(元)']]
-      const plotDictKeys = Object.keys(plotDict)
-      const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
+      // const plotDictKeys = Object.keys(plotDict)
+      // const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
 
-      for (const plotDictKey of sortedKeys) {
+      for (const plotDictKey in plotDict) {
         options.series[0].data.push([plotDictKey, plotDict[plotDictKey]])
       }
 
     }
   })
 }
+
 function initMap() {
   let avgPrice = echarts.init($('.space-price').get(0))
   avgPrice.showLoading()
