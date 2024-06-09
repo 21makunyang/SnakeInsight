@@ -1,4 +1,3 @@
-import time
 from typing import Iterator
 
 from snake_insight_threading.util import RedisCommand
@@ -34,7 +33,7 @@ class Query(object):
                     if hash_field.decode() not in exclude_field:
                         if auto_convert:
                             try:
-                                hash_object[hash_field.decode()] = eval(hash_value.decode())
+                                hash_object[hash_field.decode()] = float(hash_value.decode())
                             except Exception:
                                 hash_object[hash_field.decode()] = hash_value.decode()
                         else:

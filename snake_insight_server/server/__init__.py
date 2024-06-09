@@ -7,4 +7,4 @@ app = Flask(__name__)
 __all__ = ['app', 'request', 'make_response']
 
 
-app.route('/plot')(get_info)
+app.route('/plot', methods=["GET", "POST"])(get_info)
