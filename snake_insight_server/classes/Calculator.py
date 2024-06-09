@@ -20,7 +20,7 @@ class StatisticalMethod(object):
 
 class Max(StatisticalMethod):
     def __init__(self, *, return_tuple=False):
-        super().__init__()
+        super().__init__(return_tuple=return_tuple)
         self.max: dict[str | int | float, float] = {}
 
     def add(self, _id, value):
@@ -28,7 +28,16 @@ class Max(StatisticalMethod):
         if value > self.max[_id]:
             self.max[_id] = value
 
+    def result_tuple(self):
+        result = []
+        for k, v in self.max.items():
+            result.append((k, v))
+        result.sort(key=lambda item: item[0])
+        return result
+
     def result(self):
+        if self.return_tuple:
+            return self.result_tuple()
         return self.max
 
     def clear(self):
@@ -37,7 +46,7 @@ class Max(StatisticalMethod):
 
 class Min(StatisticalMethod):
     def __init__(self, *, return_tuple=False):
-        super().__init__()
+        super().__init__(return_tuple=return_tuple)
         self.min: dict[str | int | float, float] = {}
 
     def add(self, _id, value):
@@ -45,7 +54,16 @@ class Min(StatisticalMethod):
         if value < self.min[_id]:
             self.min[_id] = value
 
+    def result_tuple(self):
+        result = []
+        for k, v in self.min.items():
+            result.append((k, v))
+        result.sort(key=lambda item: item[0])
+        return result
+
     def result(self):
+        if self.return_tuple:
+            return self.result_tuple()
         return self.min
 
     def clear(self):
