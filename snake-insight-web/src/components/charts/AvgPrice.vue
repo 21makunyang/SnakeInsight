@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts" setup>
+import type {SnachResponse} from "@/scripts/Responce";
+
 const options = reactive({
     title: {
         text: '各区平均价格'
@@ -33,7 +35,22 @@ const options = reactive({
     series: [{ type: 'bar' }]
 })
 
+function  getDataSetSource() {
+  console.log(import.meta.env)
+  $.get({
+    url: import.meta.env.VITE_API_BASE_URL+'/plot',
+    enctype: 'multipart/form-data',
+    async: true,
+    data: {
+      'loc': '广州'
+    },
+    success: (data: SnachResponse<Object>) => {
+      console.log(data)
+    }
+  })
+}
 function initMap() {
+    getDataSetSource()
     let avgPrice = echarts.init($('.avg-price').get(0))
     avgPrice.showLoading()
     avgPrice.setOption(options)

@@ -5,7 +5,7 @@ from loguru import logger
 from snake_insight_server.server import request, make_response
 from snake_insight_server.classes import Query, Calculator
 
-
+# http://localhost:19198/plot
 def get_info():
     params = request.json
     raw_response = {}

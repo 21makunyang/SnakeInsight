@@ -204,6 +204,20 @@ class Filter(object):
 
         return statisticians_result
 
+    def get_neighborhood_price(self, region):
+        self.__init_before_process(region)
+        statisticians_result = {}
+
+        for house_info in self.city_infos:
+            raw = house_info.get('raw')
+            space = float(house_info.get('space'))
+            price = float(house_info.get('price'))
+            price_per_square = price / space
+            print('*************************')
+            print(raw)
+
+        return
+
     def get_predict_base(self, region):
         if self.predict_base and (region is None or region == self.last_region):
             return self.predict_base
@@ -268,9 +282,10 @@ class Filter(object):
 if __name__ == "__main__":
     filter = Filter()
     start = time.time()
+    res = filter.get_neighborhood_price('海珠')
     # res = filter.get_floor_price('海珠')
-    print(filter.get_predict_base('海珠'))
-    res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
+    # print(filter.get_predict_base('海珠'))
+    # res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
     end = time.time()
-    print(res)
+    # print(res)
     print('finished\ncost: {}'.format(str(end - start)))
