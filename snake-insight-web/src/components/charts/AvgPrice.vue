@@ -37,14 +37,23 @@ const options = reactive({
 
 function  getDataSetSource() {
   console.log(import.meta.env)
-  $.get({
+  // MESSAGE 传递Json格式数据要用POST方法
+  $.post({
     url: import.meta.env.VITE_API_BASE_URL+'/plot',
-    enctype: 'multipart/form-data',
+    // MESSAGE Json的编码格式
+    contentType: 'application/json',
     async: true,
-    data: {
-      'loc': '广州'
-    },
+    // MESSAGE 传递Json格式数据时要用JSON.stringify转字符串
+    data: JSON.stringify({
+      "loc": ["广州"],
+      "x": "space",
+      "ys": [["price", "Box"]],
+      "detailed": true
+    }),
     success: (data: SnachResponse<Object>) => {
+      // TODO onSuccess
+      // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
+      // MESSAGE 所以理论上不要用这个interface
       console.log(data)
     }
   })
