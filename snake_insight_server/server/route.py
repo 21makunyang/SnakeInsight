@@ -1,4 +1,5 @@
 import json
+import time
 
 from loguru import logger
 
@@ -7,6 +8,7 @@ from snake_insight_server.classes import Query, Calculator
 
 # http://localhost:19198/plot
 def get_info():
+    start = time.time()
     params = request.json
     raw_response = {}
     if isinstance(params, dict):
@@ -44,6 +46,9 @@ def get_info():
             raw_response["message"] = f"Cannot parse request params(Cause: {e})."
     else:
         raw_response["message"] = "Cannot parse request params."
+
+    end = time.time()
+    raw_response["process_time"] = {"start": start, "end": end, "cost": end - start}
 
     response = make_response(json.dumps(raw_response, ensure_ascii=False))
     response.mimetype = 'application/json'
