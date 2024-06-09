@@ -278,11 +278,22 @@ class Filter(object):
 
         return result
 
+    def get_region_price(self, region):
+        self.__init_before_process(region)
+
+        price_list = [float(info.get('price')) for info in self.city_infos if info.get('price') is not None]
+        return sum(price_list) / len(price_list)
+
 
 if __name__ == "__main__":
+    region_list = ['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾',
+                                  '越秀', '黄埔']
     filter = Filter()
     start = time.time()
-    res = filter.get_neighborhood_price('海珠')
+    for region in region_list:
+        res = filter.get_region_price(region)
+        print(region, res)
+    # res = filter.get_region_price('海珠')
     # res = filter.get_floor_price('海珠')
     # print(filter.get_predict_base('海珠'))
     # res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
