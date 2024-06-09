@@ -1,10 +1,10 @@
 from flask import Flask, request, make_response
 
-from .route import get_info
+from .Filter import Filter
+from .route import get_info, app
 
-app = Flask(__name__)
-
-__all__ = ['app', 'request', 'make_response']
+__all__ = ['app', 'request', 'make_response', 'Filter']
 
 
-app.route('/plot', methods=["GET", "POST"])(get_info)
+
+# app.route('/plot', methods=["GET", "POST"])(get_info)

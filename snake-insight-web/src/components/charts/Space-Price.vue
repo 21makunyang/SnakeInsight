@@ -19,21 +19,7 @@ const options = reactive({
   legend: {},
   dataset: {
     // 提供一份数据。
-    source: [
-      ['行政区', '每平方米价格(元)'],
-      ['越秀区', 5716.79],
-      ['海珠区', 4559.26],
-      ['天河区', 4541.14],
-      ['白云区', 2980.35],
-      ['黄埔区', 2879.66],
-      ['番禺区', 3683.00],
-      ['花都区', 2512.09],
-      ['南沙区', 1939.32],
-      ['增城区', 1929.85],
-      ['从化区', 1939.32],
-      ['荔湾区', 3566.63],
-      ['广州周边', 3453.74]
-    ]
+    source: []
   },
   // 声明一个 X 轴，数值轴。默认情况下，每个系列会自动对应到 dataset 的每一列。
   xAxis: {type: 'value'},
@@ -74,7 +60,7 @@ function getDataSetSource() {
       // const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
 
       for (const plotDictKey in plotDict) {
-        options.series[0].data.push([plotDictKey, plotDict[plotDictKey]])
+        options.series[0].data.push([plotDictKey, plotDict[plotDictKey]/plotDictKey])
       }
 
     }

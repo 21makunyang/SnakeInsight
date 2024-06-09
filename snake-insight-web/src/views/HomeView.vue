@@ -11,7 +11,8 @@
                 <div><avg-price /></div>
               </el-col>
               <el-col :lg="8" :md="12" :sm="24">
-                <div><space-price /></div>
+                <!-- TODO: 获取选择区域-->
+                <div><space-price :region="'越秀'"/></div>
               </el-col>
             </el-row>
           </el-col>

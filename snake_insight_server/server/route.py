@@ -3,11 +3,16 @@ import time
 
 from loguru import logger
 
-from snake_insight_server.server import request, make_response
+from snake_insight_server.server import request, make_response, Filter
 from snake_insight_server.classes import Query, Calculator
+from flask import Flask, request, make_response
+
+app = Flask(__name__)
+filter = Filter()
 
 
 # http://localhost:19198/plot
+@app.route('/plot', methods=["GET", "POST"])
 def get_info():
     start = time.time()
     params = request.json
@@ -59,3 +64,19 @@ def get_info():
     logger.info(f"Cost {end - start}s")
 
     return response
+
+
+@app.route('/getRoomPrice', methods=["GET", "POST"])
+def get_room_price():
+    params = request.json
+    region = params.get("region", "天河")
+    raw_response = {}
+    res = filter.get_room_price(region)
+    processed_res = {}
+    for k, v in res.items():
+        processed_res[f'{k[1]}室{k[0]}厅'] = v
+
+    raw_response["data"] = processed_res
+    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
+    responce.mimetype = 'application/json'
+    return responce
