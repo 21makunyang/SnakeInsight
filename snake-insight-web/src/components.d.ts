@@ -20,5 +20,6 @@ declare module 'vue' {
     RoomAmountPrice: typeof import('./components/charts/RoomAmount-Price.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SpacePrice: typeof import('./components/charts/Space-Price.vue')['default']
   }
 }

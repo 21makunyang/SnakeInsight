@@ -30,7 +30,15 @@ const options = reactive({
         ]
     },
     // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
-    xAxis: { type: 'category' },
+    xAxis: { type: 'category',
+      axisLabel: {
+        color: '#333',
+        //  让x轴文字方向为竖向
+        interval: 0,
+        formatter: function(value) {
+          return value.split('').join('\n')
+        }
+      }},
     // 声明一个 Y 轴，数值轴。
     yAxis: {},
     // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
@@ -65,7 +73,6 @@ function  getDataSetSource() {
 function initMap() {
     let avgPrice = echarts.init($('.avg-price').get(0))
     avgPrice.showLoading()
-  console.log(options)
     avgPrice.setOption(options)
     avgPrice.hideLoading()
     window.addEventListener('resize', () => {

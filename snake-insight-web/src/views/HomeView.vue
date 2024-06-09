@@ -8,10 +8,10 @@
           <el-col :lg="16" :md="14" :sm="24">
             <el-row>
               <el-col :lg="8" :md="12" :sm="24">
-                <avg-price />
+                <div><avg-price /></div>
               </el-col>
               <el-col :lg="8" :md="12" :sm="24">
-                <avg-price />
+                <div><space-price /></div>
               </el-col>
             </el-row>
           </el-col>

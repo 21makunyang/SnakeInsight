@@ -1,5 +1,5 @@
 <template>
-  <div class="avg-price" style="width: 100%;height: 40vh;"></div>
+  <div class="space-price" style="width: 100%;height: 40vh;"></div>
 </template>
 
 <script lang="ts" setup>
@@ -13,14 +13,14 @@ let region = toRef(props, 'region')
 
 const options = reactive({
   title: {
-    text: '（有无电梯）楼层——每平方米价格'
+    text: '面积——每平方米价格'
   },
   tooltip: {},
   legend: {},
   dataset: {
     // 提供一份数据。
     source: [
-      ['行政区', '平均租房价格(元)'],
+      ['行政区', '每平方米价格(元)'],
       ['越秀区', 5716.79],
       ['海珠区', 4559.26],
       ['天河区', 4541.14],
@@ -35,12 +35,12 @@ const options = reactive({
       ['广州周边',3453.74]
     ]
   },
-  // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
-  xAxis: { type: 'category' },
+  // 声明一个 X 轴，数值轴。默认情况下，每个系列会自动对应到 dataset 的每一列。
+  xAxis: { type:'value'},
   // 声明一个 Y 轴，数值轴。
-  yAxis: {},
+  yAxis: { type: 'value'},
   // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
-  series: [{ type: 'bar' }]
+  series: [{ type: 'line', smooth: true,data: [] }]
 })
 
 function  getDataSetSource() {
@@ -53,23 +53,31 @@ function  getDataSetSource() {
     async: true,
     // MESSAGE 传递Json格式数据时要用JSON.stringify转字符串
     data: JSON.stringify({
-      "loc": [region],
+      "loc": [`广州:${props.region}`],
       "x": "space",
-      "ys": [["price", "Box"]],
+      "ys": [["price", "Avg"]],
       "detailed": true
     }),
     success: (data: any) => {
-      // TODO onSuccess
       // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
       // MESSAGE 所以理论上不要用这个interface
+      // console.log(data)
+      const plotDict = data.plotData[0].value
+      options.series[0].data = [['面积', '每平方米价格(元)']]
+      const plotDictKeys = Object.keys(plotDict)
+      const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
 
-      console.log(data)
+      for (const plotDictKey of sortedKeys) {
+        options.series[0].data.push([plotDictKey, plotDict[plotDictKey]])
+      }
+
     }
   })
 }
 function initMap() {
-  let avgPrice = echarts.init($('.avg-price').get(0))
+  let avgPrice = echarts.init($('.space-price').get(0))
   avgPrice.showLoading()
+  console.log(options)
   avgPrice.setOption(options)
   avgPrice.hideLoading()
   window.addEventListener('resize', () => {
@@ -77,7 +85,7 @@ function initMap() {
   })
 }
 
-watch(region, () => {
+watch(options, () => {
   initMap()
 })
 
