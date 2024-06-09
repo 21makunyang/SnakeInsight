@@ -1,14 +1,17 @@
+from typing import *
+
 from snake_insight_server.classes import Query
 
 
 class StatisticalMethod(object):
-    def __init__(self):
+    def __init__(self, *, return_tuple=False):
+        self.return_tuple = return_tuple
         pass
 
     def add(self, _id, value) -> None:
         pass
 
-    def result(self) -> dict[str, int | float | list]:
+    def result(self) -> Any:
         pass
 
     def clear(self) -> None:
@@ -16,7 +19,7 @@ class StatisticalMethod(object):
 
 
 class Max(StatisticalMethod):
-    def __init__(self):
+    def __init__(self, *, return_tuple=False):
         super().__init__()
         self.max: dict[str | int | float, float] = {}
 
@@ -33,7 +36,7 @@ class Max(StatisticalMethod):
 
 
 class Min(StatisticalMethod):
-    def __init__(self):
+    def __init__(self, *, return_tuple=False):
         super().__init__()
         self.min: dict[str | int | float, float] = {}
 
@@ -50,15 +53,25 @@ class Min(StatisticalMethod):
 
 
 class Avg(StatisticalMethod):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *, return_tuple=False):
+        super().__init__(return_tuple=return_tuple)
         self.avg: dict[str, tuple[float, int]] = {}
 
     def add(self, _id, value):
         _v, _c = self.avg.get(_id, (0, 0))
         self.avg[_id] = (_v + value, _c + 1)
 
+    def result_tuple(self):
+        result = []
+        for k, v in self.avg.items():
+            s, n = v
+            result.append((k, (s / n) if n != 0 else 0.0))
+        result.sort(key=lambda item: item[0])
+        return result
+
     def result(self):
+        if self.return_tuple:
+            return self.result_tuple()
         result = {}
         for k, v in self.avg.items():
             s, n = v
@@ -70,7 +83,7 @@ class Avg(StatisticalMethod):
 
 
 class Box(StatisticalMethod):
-    def __init__(self):
+    def __init__(self, *, return_tuple=False):
         super().__init__()
         self.box: dict[str | int | float, tuple[Avg, list[int | float]]] = {}
 
@@ -132,7 +145,7 @@ class Box(StatisticalMethod):
 
 
 class Raw(StatisticalMethod):
-    def __init__(self):
+    def __init__(self, *, return_tuple=False):
         super().__init__()
         self.raw: dict[str | int | float, list] = {}
 
@@ -151,7 +164,7 @@ ProcessOptions: dict[str, StatisticalMethod.__class__] = {"Max": Max, "Min": Min
 
 
 class Calculator(object):
-    def __init__(self, query: Query, *, x_field: str, y_fields: list[tuple[str, str]]):
+    def __init__(self, query: Query, *, x_field: str, y_fields: list[tuple[str, str, bool]]):
         self.query = query
         self.x = x_field
         self.ys = y_fields
@@ -159,10 +172,10 @@ class Calculator(object):
     def plot_data(self, detailed_data: bool = False) -> dict | list:
         __operators: dict[tuple[str, str], StatisticalMethod] = {}
         for y in self.ys:
-            field_name, operator = y
+            field_name, operator, return_tuple = y
             if operator not in ProcessOptions:
                 raise ValueError(f"Unexpected operator({operator})")
-            __operators[(field_name, operator)] = ProcessOptions[operator]()
+            __operators[(field_name, operator)] = ProcessOptions[operator](return_tuple=return_tuple)
         for _dict in self.query.fetch(exclude_field=["raw", "unit", "community"], auto_convert=True):
             for __op_id, __op in __operators.items():
                 __field_name, _ = __op_id
@@ -175,6 +188,7 @@ class Calculator(object):
                 __result = __op.result()
                 __detail = {"x_field": self.x,
                             "y_field": __field_name,
+                            "return_tuple": __op.return_tuple,
                             "method": __method,
                             "value": __result}
                 __plot_data.append(__detail)

@@ -6,6 +6,7 @@ from loguru import logger
 from snake_insight_server.server import request, make_response
 from snake_insight_server.classes import Query, Calculator
 
+
 # http://localhost:19198/plot
 def get_info():
     start = time.time()
@@ -28,7 +29,9 @@ def get_info():
                 raise Exception("ys")
             for y in params["ys"]:
                 if isinstance(y, list) and len(y) == 2:
-                    y_fields.append((y[0], y[1]))
+                    y_fields.append((y[0], y[1], False))
+                elif isinstance(y, list) and len(y) == 3:
+                    y_fields.append((y[0], y[1], y[2]))
                 else:
                     raise Exception("ys[?]")
 
@@ -52,4 +55,7 @@ def get_info():
 
     response = make_response(json.dumps(raw_response, ensure_ascii=False))
     response.mimetype = 'application/json'
+
+    logger.info(f"Cost {end - start}s")
+
     return response
