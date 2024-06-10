@@ -77,7 +77,7 @@ function initMap() {
   })
 }
 
-watch(region, () => {
+watch(options, () => {
   initMap()
 })
 

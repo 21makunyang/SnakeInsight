@@ -4,6 +4,7 @@
 
 <script lang="ts" setup>
 import guangzhou from '@/json/geojson/440100.json'
+const emit = defineEmits(['guangzhouMap-click'])
 const options = reactive(
     {
         geo: {
@@ -93,6 +94,9 @@ function initMap(){
     echarts.registerMap('guangzhou', (guangzhou) as any)
     guangzhouMap.setOption(options)
     guangzhouMap.hideLoading()
+    guangzhouMap.on('click', (params) => {
+      emit('guangzhouMap-click',params)
+    })
     window.addEventListener('resize', () => {
         guangzhouMap.resize()
     })

@@ -70,11 +70,28 @@ def get_info():
 def get_room_price():
     params = request.json
     region = params.get("region", "天河")
+    print(region)
     raw_response = {}
     res = filter.get_room_price(region)
     processed_res = {}
     for k, v in res.items():
         processed_res[f'{k[1]}室{k[0]}厅'] = v
+
+    raw_response["data"] = processed_res
+    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
+    responce.mimetype = 'application/json'
+    return responce
+
+@app.route('/getAreaPrice', methods=["GET", "POST"])
+def get_area_price():
+    params = request.json
+    region = params.get("region", "天河")
+    print(region)
+    raw_response = {}
+    res = filter.get_area_price(region)
+    processed_res = {}
+    for k, v in res.items():
+        processed_res[k[0]] = v
 
     raw_response["data"] = processed_res
     responce = make_response(json.dumps(raw_response, ensure_ascii=False))

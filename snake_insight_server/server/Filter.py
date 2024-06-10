@@ -198,6 +198,8 @@ class Filter(object):
         for k in statisticians_result:
             statisticians_result[k][0] = statisticians_result[k][0] / statisticians_result[k][3]
 
+        return statisticians_result
+
     def get_distribution_by_area(self, region):
         self.__init_before_process(region)
         statisticians_result = {}

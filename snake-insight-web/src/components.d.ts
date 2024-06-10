@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AreaPrice: typeof import('./components/charts/Area-Price.vue')['default']
     AvgPrice: typeof import('./components/charts/AvgPrice.vue')['default']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElMenu: typeof import('element-plus/es')['ElMenu']
