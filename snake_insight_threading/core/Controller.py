@@ -12,13 +12,10 @@ from snake_insight_threading.common import STOP_SIGNAL
 from snake_insight_threading.util import RedisCommand
 
 
-history = {}
-
-
 class Controller(threading.Thread):
-    redis = RedisCommand()
+    redis = RedisCommand(db=1)
 
-    def __init__(self, *, max_idle_time: int = None, idle_detection_time: int = None):
+    def __init__(self, *, max_idle_time: int = None, idle_detection_time: int = None, parser_page_limit: int = 50):
         super().__init__()
 
         self.task_queue = queue.Queue[Task]()
@@ -27,10 +24,11 @@ class Controller(threading.Thread):
         self.parser_to_processor_queue = queue.Queue[Task]()
 
         self.spider = Spider(self.task_queue, self.spider_to_parser_queue)
-        self.parser = Parser(self.spider_to_parser_queue, self.parser_to_processor_queue)
+        self.parser = Parser(self.spider_to_parser_queue, self.parser_to_processor_queue, page_limit=parser_page_limit)
         self.processor = Processor(self.parser_to_processor_queue, self.result_queue)
 
         self.task_bit_map = TaskBitMap()
+        self.history = {}
 
         if max_idle_time is None:
             self.max_idle_time = 5
@@ -71,7 +69,7 @@ class Controller(threading.Thread):
                     self.stop()
                     break
 
-                if task.failed():
+                if task.interrupted:
                     if len(task.target) == 0:
                         logger.warning(f'Task failed.\n'
                                        f'{task.task_info()}')
@@ -84,15 +82,12 @@ class Controller(threading.Thread):
                         if isinstance(sub_target, Task):
                             self.add_task(task=sub_target)
                         elif isinstance(sub_target, HouseInfo):
-                            # TODO 结果收集
-                            history[sub_target.id] = sub_target
+                            self.history[sub_target.id] = sub_target.__dict__
                             self.redis.hset(sub_target)
                         else:
-                            # TODO 类型不匹配
-                            pass
+                            logger.warning(f'Unexpected task.target.item type: {type(task.target)}')
                 else:
-                    # TODO 类型不匹配
-                    pass
+                    logger.warning(f'Unexpected task.target type: {type(task)}')
 
                 if isinstance(task.url, PagedUrl):
                     task.target = task.url.next_page
@@ -108,6 +103,6 @@ class Controller(threading.Thread):
                     self.prepare_stop = True
 
     def stop(self):
-        with open(f'log/history_{int(time.time())}.json', 'w+') as jf:
-            json.dump(history, jf)
+        with open(f'../log/history_{int(time.time())}.json', 'w+') as jf:
+            json.dump(self.history, jf)
         logger.info('Controller stopped.')

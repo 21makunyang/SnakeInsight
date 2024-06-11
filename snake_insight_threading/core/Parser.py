@@ -1,4 +1,3 @@
-import json
 import queue
 import re
 import threading
@@ -46,16 +45,17 @@ def _parse_house_info(task: Task) -> list[HouseInfo]:
                 unit=price_code_block.find(class_=['unit']).text,
                 raw=house_info_code_block.text,
                 city=task.group.split('-')[0],
-                area=address_info.contents[2].strip(),
-                region=address_info.contents[4].strip()
+                region=address_info.contents[2].strip(),
+                area=address_info.contents[4].strip()
             ))
     except Exception as e:
         task.interrupt(e)
-        logger.warning(e.__traceback__)
+        if task.strict_interrupt:
+            return []
     return house_info_list
 
 
-def _parse_region_url(task: Task) -> list[Task]:
+def _parse_region_url(task: Task, *, page_limit: int = None) -> list[Task]:
     task_list = []
     try:
         bs = BeautifulSoup(task.target.text, 'html.parser')
@@ -65,16 +65,18 @@ def _parse_region_url(task: Task) -> list[Task]:
         for code in region_url_code_list:
             if code.text != '全部' and code.text != '':
                 if task.next_parser == 'Parser.HouseInfo':
-                    url = PagedUrl(code['href'])
+                    url = PagedUrl(code['href'], page_limit=page_limit)
                 else:
                     url = code['href']
                 task_list.append(task.subtask(subgroup=code.text, url=url, target=code['href']))
     except Exception as e:
         task.interrupt(e)
+        if task.strict_interrupt:
+            return []
     return task_list
 
 
-def _parse_area_url(task: Task) -> list[Task]:
+def _parse_area_url(task: Task, *, page_limit: int = None) -> list[Task]:
     if not isinstance(task.target, Response):
         logger.warning(f'task.target must be instance of Response. Get {type(task.target)}.')
         return []
@@ -87,38 +89,43 @@ def _parse_area_url(task: Task) -> list[Task]:
         for code in region_url_code_list:
             if code.text != '全部' and code.text != '':
                 if task.next_parser == 'Parser.HouseInfo':
-                    url = PagedUrl(code['href'])
+                    url = PagedUrl(code['href'], page_limit=page_limit)
                 else:
                     url = code['href']
                 task_list.append(task.subtask(subgroup=code.text, url=url, target=code['href']))
     except Exception as e:
         task.interrupt(e)
+        if task.strict_interrupt:
+            return []
     return task_list
 
 
-def _do_parse(task: Task) -> list[HouseInfo | Task]:
+def _do_parse(task: Task, *, page_limit: int) -> list[HouseInfo | Task]:
     if task.parser == 'Parser.HouseInfo':
         parsed_list = _parse_house_info(task=task)
         return parsed_list
     elif task.parser == 'Parser.RegionUrlTask':
-        return _parse_region_url(task=task)
+        return _parse_region_url(task=task, page_limit=page_limit)
     elif task.parser == 'Parser.AreaUrlTask':
-        return _parse_area_url(task=task)
+        return _parse_area_url(task=task, page_limit=page_limit)
     else:
         message = (f'task.parser must be "Parser.HouseInfo", "Parser.RegionUrlTask" or "Parser.AreaUrlTask". '
                    f'Get "{task.parser}".')
         task.interrupt(message)
+        return []
 
 
-def do_parse(task: Task) -> list[HouseInfo | Task]:
-    return _do_parse(task)
+def do_parse(task: Task, *, page_limit: int) -> list[HouseInfo | Task]:
+    return _do_parse(task, page_limit=page_limit)
 
 
 class Parser(threading.Thread):
-    def __init__(self, in_queue: queue.Queue[Task], out_queue: queue.Queue[Task]):
+    def __init__(self, in_queue: queue.Queue[Task], out_queue: queue.Queue[Task], *, page_limit: int = 50):
         super().__init__()
         self.in_queue = in_queue
         self.out_queue = out_queue
+        
+        self.__page_limit = page_limit
 
         self.__idle = True
         self.__last_work_time = 0
@@ -131,7 +138,7 @@ class Parser(threading.Thread):
                 self.stop()
                 break
             self.work()
-            result = do_parse(task)
+            result = do_parse(task, page_limit=self.__page_limit)
             task.target = result
             self.out_queue.put(task)
             self.free()
