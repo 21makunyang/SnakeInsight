@@ -70,7 +70,7 @@ def get_info():
 def get_room_price():
     params = request.json
     region = params.get("region", "天河")
-    print(region)
+    logger.info(region)
     raw_response = {}
     res = filter.get_room_price(region)
     processed_res = {}
@@ -86,13 +86,32 @@ def get_room_price():
 def get_area_price():
     params = request.json
     region = params.get("region", "天河")
-    print(region)
+    logger.info(region)
     raw_response = {}
     res = filter.get_area_price(region)
     processed_res = {}
     for k, v in res.items():
         processed_res[k[0]] = v
 
+    raw_response["data"] = processed_res
+    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
+    responce.mimetype = 'application/json'
+    return responce
+
+@app.route('/getFloorPrice', methods=["GET", "POST"])
+def getFloorPrice():
+    params = request.json
+    region = params.get("region", "天河")
+    require_elevator = bool(params.get("require_elevator", False))
+    logger.info(region)
+    raw_response = {}
+    res = filter.get_floor_price(require_elevator, region)
+    processed_res = {}
+
+    for k, v in res.items():
+        processed_res[k[0]] = v
+
+    raw_response["data"] = processed_res
     raw_response["data"] = processed_res
     responce = make_response(json.dumps(raw_response, ensure_ascii=False))
     responce.mimetype = 'application/json'

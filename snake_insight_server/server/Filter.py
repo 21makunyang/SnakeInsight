@@ -94,7 +94,7 @@ class Filter(object):
 
         return statisticians_result
 
-    def get_floor_price(self, region=None):
+    def get_floor_price(self, require_elevator=False,region=None):
         """
         （有无电梯）楼层——每平方米价格（柱状图）
         """
@@ -107,6 +107,8 @@ class Filter(object):
             if floor is None or floor == '':
                 continue
             has_elevator = house_info.get('has_elevator')
+            if (require_elevator and not has_elevator) or (not require_elevator and has_elevator):
+                continue
             price = float(house_info.get('price'))
             space = float(house_info.get('space'))
             price_per_square = price / space
@@ -126,7 +128,7 @@ class Filter(object):
             #       (38,): [78.95237587138996, 107.98122065727699, 60.60606060606061, 4],
             #       ...
             #      }
-            tuple_k = (floor, has_elevator)
+            tuple_k = (floor,)
             statisticians = statisticians_result.get(tuple_k, [0, price_per_square, price_per_square, 0])
             statisticians[0] += price_per_square
             statisticians[1] = max(price_per_square, statisticians[1])

@@ -65,7 +65,7 @@ const options = reactive({
           show: true,
           fontSize: 20,
           fontWeight: 'bold',
-          formatter: '{b} \n{c.toFixed(2)}元'
+          formatter: '{b} \n{c}元'
         }
       },
       data: [

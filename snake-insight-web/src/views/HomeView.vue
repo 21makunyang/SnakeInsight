@@ -23,13 +23,21 @@
                 <div><room-amount-price :region="curRegion.value"/></div>
               </el-col>
             </el-row>
+            <el-row>
+              <el-col :lg="8" :md="12" :sm="24">
+                <div><floor-price :region="curRegion.value" :has_elevator="true"/></div>
+              </el-col>
+              <el-col :lg="8" :md="12" :sm="24">
+                <div><floor-price :region="curRegion.value" :has_elevator="false"/></div>
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
   </el-scrollbar>
 </template>
 
 <script setup>
-const curRegion = ref('天河')
+const curRegion = ref('白云')
 function changeRegion(region) {
   console.log(region)
   curRegion.value = region.name.slice(0,-1)
