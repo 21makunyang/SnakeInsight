@@ -164,15 +164,25 @@ class Box(StatisticalMethod):
 
 class Raw(StatisticalMethod):
     def __init__(self, *, return_tuple=False):
-        super().__init__()
+        super().__init__(return_tuple=return_tuple)
         self.raw: dict[str | int | float, list] = {}
 
     def add(self, _id, value):
         self.raw[_id] = self.raw.get(_id, [])
         self.raw[_id].append(value)
 
+    def result_tuple(self):
+        result = []
+        for k, v in self.raw.items():
+            result.append(k, v)
+        result.sort(key=lambda item: item[0])
+        return result
+
     def result(self):
-        return self.raw
+        if self.return_tuple:
+            return self.result_tuple()
+        else:
+            return self.raw
 
     def clear(self):
         self.raw = {}
