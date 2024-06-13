@@ -182,7 +182,7 @@ ProcessOptions: dict[str, StatisticalMethod.__class__] = {"Max": Max, "Min": Min
 
 
 class Calculator(object):
-    def __init__(self, query: Query, *, x_field: str, y_fields: list[tuple[str, str, bool]]):
+    def __init__(self, query: Query, *, x_field: str | tuple, y_fields: list[tuple[str, str, bool]]):
         self.query = query
         self.x = x_field
         self.ys = y_fields
@@ -197,7 +197,16 @@ class Calculator(object):
         for _dict in self.query.fetch(exclude_field=["raw", "unit", "community"], auto_convert=True):
             for __op_id, __op in __operators.items():
                 __field_name, _ = __op_id
-                __op.add(_dict[self.x], _dict[__field_name])
+                if isinstance(self.x, str):
+                    __op.add(_dict[self.x], _dict[__field_name])
+                else:
+                    try:
+                        __xs = []
+                        for __x in self.x:
+                            __xs.append(_dict[__x])
+                        __op.add(tuple(__xs), _dict[__field_name])
+                    except Exception as e:
+                        raise TypeError(f"Unexpected error({e}) at {__file__}.")
 
         if detailed_data:
             __plot_data = []

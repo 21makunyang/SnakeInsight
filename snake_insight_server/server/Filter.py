@@ -1,15 +1,9 @@
 import math
 import re
 import time
-from flask import Flask, request, make_response
+
 from snake_insight_threading.common import PredictByType
 from snake_insight_threading.util import RedisCommand
-import json
-import time
-from loguru import logger
-
-from snake_insight_server.server import request, make_response
-from snake_insight_server.classes import Query, Calculator
 
 
 class Filter(object):
@@ -90,7 +84,7 @@ class Filter(object):
         # 计算平均价格
         for k in statisticians_result:
             statisticians_result[k][0] = statisticians_result[k][0] / statisticians_result[k][3]
-        print(statisticians_result)
+
         return statisticians_result
 
     def get_floor_price(self, require_elevator=False,region=None):

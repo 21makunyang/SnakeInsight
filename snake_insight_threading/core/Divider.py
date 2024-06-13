@@ -16,7 +16,7 @@ class Divider(object):
             # print(self.redis.hget(key))
             index += 1
             print(index)
-            house_info = self.redis.hget(key)
+            house_info = self.redis.hgetall(key)
             self.redis.sadd(house_info.get(b'area').decode('utf8'), key)
 
     def divide_by_region(self):
