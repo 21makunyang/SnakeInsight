@@ -1,49 +1,70 @@
 <template>
   <el-scrollbar height="100vh">
-    <nav-bar />
+    <nav-bar/>
+    <el-row>
+      <el-col :lg="8" :md="10" :sm="24" class="map-col">
+        <guang-zhou-map @guangzhou-map-click="changeRegion"/>
+      </el-col>
+      <el-col :lg="16" :md="14" :sm="24">
         <el-row>
-          <el-col :lg="8" :md="10" :sm="24" class="map-col">
-            <guang-zhou-map @guangzhou-map-click="changeRegion"/>
+          <el-col :lg="8" :md="12" :sm="24">
+            <div>
+              <avg-price/>
+            </div>
           </el-col>
-          <el-col :lg="16" :md="14" :sm="24">
-            <el-row>
-              <el-col :lg="8" :md="12" :sm="24">
-                <div><avg-price /></div>
-              </el-col>
-              <el-col :lg="8" :md="12" :sm="24">
-                <!-- TODO: 获取选择区域-->
-                <div><space-price :region="curRegion.value"/></div>
-              </el-col>
-              <el-col :lg="8" :md="12" :sm="24">
-                <el-scrollbar height="40vh">
-                  <div><area-price :region="curRegion.value"/></div>
-                </el-scrollbar>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :lg="24" :md="24" :sm="24">
-                <div><room-amount-price :region="curRegion.value"/></div>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :lg="8" :md="12" :sm="24">
-                <div><floor-price :region="curRegion.value" :has_elevator="true"/></div>
-              </el-col>
-              <el-col :lg="8" :md="12" :sm="24">
-                <div><floor-price :region="curRegion.value" :has_elevator="false"/></div>
-              </el-col>
-            </el-row>
+          <el-col :lg="8" :md="12" :sm="24">
+            <!-- TODO: 获取选择区域-->
+            <div>
+              <space-price :region="curRegion.value"/>
+            </div>
+          </el-col>
+          <el-col :lg="8" :md="12" :sm="24">
+            <el-scrollbar height="40vh">
+              <div>
+                <area-price :region="curRegion.value"/>
+              </div>
+            </el-scrollbar>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :lg="24" :md="24" :sm="24">
+            <div>
+              <room-amount-price :region="curRegion.value"/>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :lg="8" :md="12" :sm="24">
+            <div>
+              <floor-price :region="curRegion.value" :has_elevator="true"/>
+            </div>
+          </el-col>
+          <el-col :lg="8" :md="12" :sm="24">
+            <div>
+              <floor-price :region="curRegion.value" :has_elevator="false"/>
+            </div>
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
+    <el-row style="margin: 20px 0 30px 0">
+      <el-col :span="20" :offset="2">
+        <div>
+          <box-price :region="curRegion"></box-price>
+        </div>
+      </el-col>
+
+    </el-row>
   </el-scrollbar>
 </template>
 
 <script setup>
 const curRegion = ref('白云')
+
 function changeRegion(region) {
-  console.log(region)
-  curRegion.value = region.name.slice(0,-1)
-  console.log(curRegion.value)
+  // console.log(region)
+  curRegion.value = region.name.slice(0, -1)
+  // console.log(curRegion.value)
 }
 </script>
 
