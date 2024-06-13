@@ -174,7 +174,7 @@ class Raw(StatisticalMethod):
     def result_tuple(self):
         result = []
         for k, v in self.raw.items():
-            result.append(k, v)
+            result.append((k, v))
         result.sort(key=lambda item: item[0])
         return result
 
