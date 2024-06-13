@@ -15,7 +15,9 @@
                 <div><space-price :region="curRegion.value"/></div>
               </el-col>
               <el-col :lg="8" :md="12" :sm="24">
-                <div><area-price :region="curRegion.value"/></div>
+                <el-scrollbar height="40vh">
+                  <div><area-price :region="curRegion.value"/></div>
+                </el-scrollbar>
               </el-col>
             </el-row>
             <el-row>
