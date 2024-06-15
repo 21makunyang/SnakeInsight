@@ -76,6 +76,7 @@ def get_room_price():
     processed_res = {}
     for k, v in res.items():
         processed_res[f'{k[1]}室{k[0]}厅'] = v
+        v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
     responce = make_response(json.dumps(raw_response, ensure_ascii=False))
@@ -92,6 +93,7 @@ def get_area_price():
     processed_res = {}
     for k, v in res.items():
         processed_res[k[0]] = v
+        v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
     responce = make_response(json.dumps(raw_response, ensure_ascii=False))
@@ -110,6 +112,7 @@ def getFloorPrice():
 
     for k, v in res.items():
         processed_res[k[0]] = v
+        v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
     raw_response["data"] = processed_res

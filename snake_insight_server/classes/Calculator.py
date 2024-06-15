@@ -83,7 +83,7 @@ class Avg(StatisticalMethod):
         result = []
         for k, v in self.avg.items():
             s, n = v
-            result.append((k, (s / n) if n != 0 else 0.0))
+            result.append((k, round(s / n * 100) / 100 if n != 0 else 0.0))
         result.sort(key=lambda item: item[0])
         return result
 
@@ -93,7 +93,7 @@ class Avg(StatisticalMethod):
         result = {}
         for k, v in self.avg.items():
             s, n = v
-            result[k] = (s / n) if n != 0 else 0.0
+            result[k] = round(s / n * 100) / 100 if n != 0 else 0.0
         return result
 
     def clear(self):
