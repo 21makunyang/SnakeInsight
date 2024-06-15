@@ -26,6 +26,8 @@
 </template>
 <script setup lang="ts">
 
+import type {FormInstance, FormRules} from "element-plus";
+
 const predictionFormRef = ref<FormInstance>()
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
@@ -54,27 +56,33 @@ const priceValidator = (rule: any, value: any, callback: any) => {
   if (value < 0) {
     callback(new Error('租房价格不能小于0'))
   }
+  // 注意： 自定义校验规则必须保证每个分支都调用了callback方法
+  callback()
 }
 const spaceValidator = (rule: any, value: any, callback: any) => {
   if (value < 0) {
     callback(new Error('租房面积不能小于0'))
   }
+  callback()
 }
 const floorValidator = (rule: any, value: any, callback: any) => {
   if (value < 0) {
     callback(new Error('租房楼层不能小于0'))
   }
+  callback()
 }
 
 const livingRoomValidator = (rule: any, value: any, callback: any) => {
   if (value < 0) {
     callback(new Error('起居室数量不能小于0'))
   }
+  callback()
 }
 const bedroomValidator = (rule: any, value: any, callback: any) => {
   if (value < 0) {
     callback(new Error('房间数量不能小于0'))
   }
+  callback()
 }
 const editRules = reactive<FormRules>({
   price: [
@@ -122,8 +130,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
     console.log('formEl is undefined')
     return
   }
-  console.log('submitForm')
-  formEl.validate((valid) => {
+  formEl.validate((valid: boolean) => {
     console.log('valid', valid)
     if (valid) {
       console.log('submit!')
@@ -142,7 +149,7 @@ function handlePredictClicked() {
 
 onMounted(() => {
   setTimeout(() => {
-    getPrediction()
+    // getPrediction()
   }, 20)
 })
 </script>
