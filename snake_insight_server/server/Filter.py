@@ -231,7 +231,8 @@ class Filter(object):
             floor = house_info.get('floor')
             if floor is None or floor == '':
                 continue
-            area_ = house_info.get('area')
+            area_ = region
+            area_ += house_info.get('area', '')
             has_elevator = house_info.get('has_elevator')
             living_room = house_info.get('living_room')
             bedroom = house_info.get('bedroom')
@@ -265,19 +266,19 @@ class Filter(object):
 
         return self.predict_base
 
-    def predict_price(self, area, floor, has_elevator, living_room, bed_room, space):
-        return self.predict_base.get((area, floor, has_elevator, living_room, bed_room), -1) * space
+    def predict_price(self, area, floor, has_elevator, living_room, bedroom, space):
+        return self.predict_base.get((area, floor, has_elevator, living_room, bedroom), -1) * space
 
-    def predict_space(self, area, floor, has_elevator, living_room, bed_room, price):
-        return price / self.predict_base.get((area, floor, has_elevator, living_room, bed_room), -1)
+    def predict_space(self, area, floor, has_elevator, living_room, bedroom, price):
+        return price / self.predict_base.get((area, floor, has_elevator, living_room, bedroom), -1)
 
-    def predict(self, region, area, floor, has_elevator, living_room, bed_room, predict_by_type: PredictByType, value):
+    def predict(self, region, area, floor, has_elevator, living_room, bedroom, predict_by_type: PredictByType, value):
         self.get_predict_base(region)
         result = -1
-        if predict_by_type == PredictByType.PRICE:
-            result = self.predict_space(area, floor, has_elevator, living_room, bed_room, value)
+        if predict_by_type == PredictByType.PRICE.value:
+            result = self.predict_space(area, floor, has_elevator, living_room, bedroom, value)
         else:
-            result = self.predict_price(area, floor, has_elevator, living_room, bed_room, value)
+            result = self.predict_price(area, floor, has_elevator, living_room, bedroom, value)
 
         return result
 

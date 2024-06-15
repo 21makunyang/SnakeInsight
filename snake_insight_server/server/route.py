@@ -115,6 +115,28 @@ def getFloorPrice():
         v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
+    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
+    responce.mimetype = 'application/json'
+    return responce
+
+@app.route('/getPrediction', methods=["GET", "POST"])
+def getPrediction():
+    params = request.json
+    price = params.get("price", 0)
+    space = params.get("space", 0)
+    region = params.get("region", "天河")
+    area = params.get("area", 0)
+    living_room = params.get("living_room", 0)
+    bedroom = params.get("bedroom", 0)
+    predict_by_type = params.get("predict_by_type", 0)
+    floor = params.get("floor", 0)
+    has_elevator = bool(params.get("has_elevator", False))
+    logger.info(f'region: {region}, predict_by_type: {predict_by_type}, has_elevator: {has_elevator}, floor: {floor}, area: {area} living_room: {living_room}, bed_room: {bedroom}, price: {price}, space: {space},')
+    raw_response = {}
+    res = filter.predict(region=region, area=area, floor=floor, has_elevator=has_elevator, living_room=living_room, bedroom=bedroom, predict_by_type=predict_by_type, value=price if predict_by_type == 0 else space)
+    processed_res = {"prediction": res}
+    processed_res["req"] = params
+
     raw_response["data"] = processed_res
     responce = make_response(json.dumps(raw_response, ensure_ascii=False))
     responce.mimetype = 'application/json'
