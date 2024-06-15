@@ -15,13 +15,13 @@
           <el-col :lg="8" :md="12" :sm="24">
             <!-- TODO: 获取选择区域-->
             <div>
-              <space-price :region="curRegion.value"/>
+              <space-price :region="curRegion"/>
             </div>
           </el-col>
           <el-col :lg="8" :md="12" :sm="24">
             <el-scrollbar height="40vh">
               <div>
-                <area-price :region="curRegion.value"/>
+                <area-price :region="curRegion"/>
               </div>
             </el-scrollbar>
           </el-col>
@@ -29,19 +29,19 @@
         <el-row>
           <el-col :lg="24" :md="24" :sm="24">
             <div>
-              <room-amount-price :region="curRegion.value"/>
+              <room-amount-price :region="curRegion"/>
             </div>
           </el-col>
         </el-row>
         <el-row>
           <el-col :lg="8" :md="12" :sm="24">
             <div>
-              <floor-price :region="curRegion.value" :has_elevator="true"/>
+              <floor-price :region="curRegion" :has_elevator="true"/>
             </div>
           </el-col>
           <el-col :lg="8" :md="12" :sm="24">
             <div>
-              <floor-price :region="curRegion.value" :has_elevator="false"/>
+              <floor-price :region="curRegion" :has_elevator="false"/>
             </div>
           </el-col>
         </el-row>

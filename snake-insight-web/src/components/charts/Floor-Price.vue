@@ -50,7 +50,7 @@ const options = reactive({
   series: [{ type: 'bar' }]
 })
 
-function  getDataSetSource() {
+function getDataSetSource() {
   // console.log(import.meta.env)
   // MESSAGE 传递Json格式数据要用POST方法
   $.post({
@@ -71,6 +71,7 @@ function  getDataSetSource() {
       const plotDict = data.data
       const plotDictKeys = Object.keys(plotDict)
       const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
+      options.title.text = `${props.region}区 楼层(${props.has_elevator ? '有电梯' : '无电梯'})——每平方米价格`
       options.dataset.source = [['楼层', '平均每平方米价格(元)','每平方米最高价(元)','每平方米最低价(元)','统计数量']]
       for (const plotDictKey of sortedKeys) {
         let plotDictKeyNum = Number(plotDictKey)
@@ -96,9 +97,12 @@ function initMap() {
   })
 }
 
-// watch(options, () => {
-//   initMap()
-// })
+watch(props, ()=>{
+  getDataSetSource()
+})
+watch(options, () => {
+  initMap()
+})
 
 onMounted(() => {
   setTimeout(() => {

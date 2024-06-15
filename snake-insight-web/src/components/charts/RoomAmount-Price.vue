@@ -3,6 +3,8 @@
 </template>
 
 <script lang="ts" setup>
+import {watch} from "vue";
+
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
     type: String,
@@ -117,7 +119,7 @@ function  getDataSetSource() {
     success: (data: any) => {
       // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
       // MESSAGE 所以理论上不要用这个interface
-      options.title.text = region.value + '区厅室数量-租房价格、厅室数量统计'
+      options.title.text = region.value + '区 厅室数量-租房价格、厅室数量统计'
       options.legend.data = []
       options.series[0].data = []
       options.series[1].data = []
@@ -139,7 +141,9 @@ function initMap() {
     avgPrice.resize()
   })
 }
-
+watch(props, () => {
+  getDataSetSource()
+})
 watch(options, () => {
   initMap()
 })

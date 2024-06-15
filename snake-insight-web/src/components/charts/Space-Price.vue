@@ -9,26 +9,33 @@ const props = defineProps({
     default: '天河'
   }
 })
-let region = toRef(props, 'region')
 
+let avgPrice: any = undefined
+const region = toRef(props, 'region')
 const options = reactive({
   title: {
     text: '面积——每平方米价格'
   },
   tooltip: {},
-  legend: {},
+  legend: {
+    type: 'scroll',
+    right: 'right',
+    orient: 'vertical',
+    // left: 10,
+    top: 30,
+    bottom: 20
+  },
   dataset: {
     // 提供一份数据。
-    source: []
+    source: [['', 0]]
   },
   // 声明一个 X 轴，数值轴。默认情况下，每个系列会自动对应到 dataset 的每一列。
-  xAxis: {type: 'value'},
+  xAxis: {type: 'value', name: '面积(m²)',},
   // 声明一个 Y 轴，数值轴。
-  yAxis: {type: 'value'},
+  yAxis: {type: 'value', name: '价格(元)',},
   // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
   series: [{
     type: 'scatter',
-    data: [],
     symbolSize: function (value) {
       return 3;
     }
@@ -54,13 +61,14 @@ function getDataSetSource() {
       // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
       // MESSAGE 所以理论上不要用这个interface
       // console.log(data)
+      options.title.text = `${props.region}区 面积——每平方米价格`
       const plotDict = data.plotData[0].value
-      options.series[0].data = [['面积', '每平方米价格(元)']]
+      options.dataset.source = [['面积', '每平方米价格(元)']]
       // const plotDictKeys = Object.keys(plotDict)
       // const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
 
       for (const plotDictKey in plotDict) {
-        options.series[0].data.push([plotDictKey, plotDict[plotDictKey]/plotDictKey])
+        options.dataset.source.push([plotDictKey, plotDict[plotDictKey] / Number(plotDictKey)])
       }
 
     }
@@ -68,7 +76,9 @@ function getDataSetSource() {
 }
 
 function initMap() {
-  let avgPrice = echarts.init($('.space-price').get(0))
+  if (avgPrice === undefined) {
+    avgPrice = echarts.init($('.space-price').get(0))
+  }
   avgPrice.showLoading()
   avgPrice.setOption(options)
   avgPrice.hideLoading()
@@ -77,13 +87,12 @@ function initMap() {
   })
 }
 
+watch(props, () => {
+  getDataSetSource()
+})
 watch(options, () => {
   initMap()
 })
-
-// watch(region, () => {
-//   getDataSetSource()
-// })
 
 onMounted(() => {
   setTimeout(() => {

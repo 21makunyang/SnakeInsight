@@ -13,7 +13,7 @@ let boxPrice: any = undefined
 let dataAxisTitle: string[] = []
 const options = reactive({
   title: {
-    text: `${props.region}区各区域价格箱型图`
+    text: `${props.region}区 各区域价格箱型图`
   },
   tooltip: {
     trigger: 'item',
@@ -68,7 +68,7 @@ const options = reactive({
       datasetIndex: 1
     },
     {
-      name: '异常值',
+      name: '离群值',
       type: 'scatter',
       encode: {x: 0, y: 1},
       datasetIndex: 2
@@ -98,7 +98,7 @@ function getDataSetSource() {
       "detailed": true
     }),
     success: (data: any) => {
-      options.title.text = `${props.region}区各区域价格箱型图`
+      options.title.text = `${props.region}区 各区域价格箱型图`
 
       let plotData = data['plotData'][0]['value']
       options.dataset[0].source = []
@@ -108,7 +108,6 @@ function getDataSetSource() {
         dataAxisTitle.push(x)
         options.dataset[0].source.push(y)
       }
-      console.log(options.dataset[0].source)
     }
   })
 }
