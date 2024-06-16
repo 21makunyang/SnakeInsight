@@ -5,7 +5,7 @@
       <el-col :lg="8" :md="10" :sm="24" class="map-col">
         <guang-zhou-map @guangzhou-map-click="changeRegion"/>
       </el-col>
-      <el-col :lg="24" :md="24" :sm="24" class="prediction-col">
+      <el-col :lg="16" :md="24" :sm="24" class="prediction-col">
         <!--预测方式：0-价格，1-面积 -->
         <prediction-by-space :region="curRegion" :predict_by_type="1"/>
       </el-col>
