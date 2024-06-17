@@ -99,6 +99,29 @@ class Avg(StatisticalMethod):
     def clear(self):
         self.avg = {}
 
+class Count(StatisticalMethod):
+    def __init__(self, *, return_tuple=False):
+        super().__init__(return_tuple=return_tuple)
+        self.count: dict[str | int | float, int] = {}
+
+    def add(self, _id, value):
+        self.count[_id] = self.count.get(_id, 0) + 1
+
+    def result_tuple(self):
+        result = []
+        for k, v in self.count.items():
+            result.append((k, v))
+        result.sort(key=lambda item: item[0])
+        return result
+
+    def result(self):
+        if self.return_tuple:
+            return self.result_tuple()
+        return self.count
+
+    def clear(self):
+        self.count = {}
+
 
 class Box(StatisticalMethod):
     def __init__(self, *, return_tuple=False):
@@ -188,7 +211,7 @@ class Raw(StatisticalMethod):
         self.raw = {}
 
 
-ProcessOptions: dict[str, StatisticalMethod.__class__] = {"Max": Max, "Min": Min, "Avg": Avg, "Box": Box, "Raw": Raw}
+ProcessOptions: dict[str, StatisticalMethod.__class__] = {"Max": Max, "Min": Min, "Avg": Avg, "Count": Count, "Box": Box, "Raw": Raw}
 
 
 class Calculator(object):
