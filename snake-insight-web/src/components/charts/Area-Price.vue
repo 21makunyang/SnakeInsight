@@ -93,7 +93,7 @@ function getDataSetSource() {
             end: ratio * 100,
             left: 'center',
             width: '75%',
-            bottom: 40
+            bottom: 0
           },
           {
             type: 'inside',

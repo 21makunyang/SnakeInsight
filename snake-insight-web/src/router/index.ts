@@ -10,8 +10,13 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/PredictionBySpace',
-      name: 'PredictionBySpace',
+      path: '/home',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/predictionBySpace',
+      name: 'predictionBySpace',
       component: PredictionBySpacePage
     }
   ]
