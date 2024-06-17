@@ -101,6 +101,7 @@ function getDataSetSource() {
       options.title.text = `${props.region}区 各区域价格箱型图`
 
       let plotData = data['plotData'][0]['value']
+      console.log(plotData)
       options.dataset[0].source = []
       dataAxisTitle = []
       for (const point of plotData) {

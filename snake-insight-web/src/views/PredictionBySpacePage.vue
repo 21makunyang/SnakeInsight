@@ -1,6 +1,5 @@
 <template>
-  <el-scrollbar height="100vh">
-    <nav-bar/>
+  <el-scrollbar height="90vh">
     <el-row>
       <el-col :lg="8" :md="10" :sm="24" class="map-col">
         <guang-zhou-map @guangzhou-map-click="changeRegion"/>
