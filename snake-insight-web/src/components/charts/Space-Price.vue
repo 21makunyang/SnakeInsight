@@ -71,7 +71,7 @@ function getDataSetSource() {
       // const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
 
       for (const plotDictKey in plotDict) {
-        options.dataset.source.push([plotDictKey, plotDict[plotDictKey] / Number(plotDictKey)])
+        options.dataset.source.push([plotDictKey, (plotDict[plotDictKey] / Number(plotDictKey)).toFixed(2)])
       }
 
     }
