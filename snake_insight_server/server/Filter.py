@@ -13,6 +13,7 @@ class Filter(object):
     last_region = ''
     predict_base = {}
     count = 0
+    area_dic = set()
     def __init__(self, region=None):
         self.get_city_info_by_area(region)
         # self.app = Flask(__name__)
@@ -41,6 +42,8 @@ class Filter(object):
                 # 将tags的值转为列表
                 house_info_utf8['tags'] = str(house_info_utf8.get('tags')[1:-1]).split(',')
                 house_info_utf8['has_elevator'] = False
+
+                self.area_dic.add(house_info_utf8.get('area'))
 
                 # 对tags进行遍历，去掉多余的单引号，判断是否有电梯
                 for i, tag in enumerate(house_info_utf8['tags']):
@@ -299,14 +302,16 @@ if __name__ == "__main__":
     filter = Filter()
     start = time.time()
     for region in region_list:
-        print('start:', region)
-        res = filter.get_floor_price(region)
-        # print(region, res)
+        # print('start:', region)
+        res = filter.get_region_price(region)
+        print(region, res)
     # res = filter.get_region_price('海珠')
     # res = filter.get_floor_price('海珠')
     # print(filter.get_predict_base('海珠'))
     # res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
     end = time.time()
     # print(res)
-    print(filter.count)
+    print(filter.area_dic)
+    for i, area in enumerate(list(filter.area_dic)):
+        print(f'"{area}": {i},')
     print('finished\ncost: {}'.format(str(end - start)))

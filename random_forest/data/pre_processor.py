@@ -1,6 +1,8 @@
 import math
 import re
 
+from random_forest.utils.place_code import region_code, area_code
+
 
 class PreProcessor(object):
     def __init__(self):
@@ -25,15 +27,16 @@ class PreProcessor(object):
 
         floor, ok = self.get_floor(house_info_utf8.get('floor'))
         if not ok:
-            return []
+            return None, None
 
-        area = house_info_utf8.get('area')
+        area = self.encode_area(house_info_utf8.get('area'))
+        region = self.encode_region(house_info_utf8.get('region'))
         living_room = house_info_utf8.get('living_room')
         bedroom = house_info_utf8.get('bedroom')
         price = float(house_info_utf8.get('price'))
         space = float(house_info_utf8.get('space'))
 
-        return [area, floor, has_elevator, living_room, bedroom, space], price
+        return [area, region, floor, has_elevator, living_room, bedroom, space], price
 
     def get_floor(self, floor_info):
         if floor_info == '':
@@ -50,10 +53,7 @@ class PreProcessor(object):
         return floor, True
 
     def encode_region(self, region):
-        pass
+        return region_code.get(region, -1)
 
     def encode_area(self, area):
-        pass
-
-
-
+        return area_code.get(area, -1)
