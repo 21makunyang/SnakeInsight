@@ -12,6 +12,7 @@ class Filter(object):
     city_infos = []
     last_region = ''
     predict_base = {}
+    count = 0
     def __init__(self, region=None):
         self.get_city_info_by_area(region)
         # self.app = Flask(__name__)
@@ -98,6 +99,8 @@ class Filter(object):
         for house_info in self.city_infos:
             floor = house_info.get('floor')
             if floor is None or floor == '':
+                self.count+=1
+                print(f"floor is None {self.count}")
                 continue
             has_elevator = house_info.get('has_elevator')
             if (require_elevator and not has_elevator) or (not require_elevator and has_elevator):
@@ -296,12 +299,14 @@ if __name__ == "__main__":
     filter = Filter()
     start = time.time()
     for region in region_list:
-        res = filter.get_region_price(region)
-        print(region, res)
+        print('start:', region)
+        res = filter.get_floor_price(region)
+        # print(region, res)
     # res = filter.get_region_price('海珠')
     # res = filter.get_floor_price('海珠')
     # print(filter.get_predict_base('海珠'))
     # res = filter.predict('海珠', '宝岗', 3, True, 1, 2, PredictByType.SPACE, 80)
     end = time.time()
     # print(res)
+    print(filter.count)
     print('finished\ncost: {}'.format(str(end - start)))
