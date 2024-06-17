@@ -88,8 +88,7 @@ const options = reactive(
     })
 
 
-function getDataSetSource_count() {
-    guangzhouMap.showLoading()
+async function getDataSetSource_count() {
     // console.log(import.meta.env)
     // MESSAGE 传递Json格式数据要用POST方法
     $.post({
@@ -116,15 +115,13 @@ function getDataSetSource_count() {
             }
             console.log(plotDict)
             options.visualMap.max = max
-            guangzhouMap.hideLoading()
         }
     })
 }
 
-function getDataSetSource_avg() {
+async function getDataSetSource_avg() {
     // console.log(import.meta.env)
     // MESSAGE 传递Json格式数据要用POST方法
-    guangzhouMap.showLoading()
     $.post({
         url: import.meta.env.VITE_API_BASE_URL + '/plot',
         // MESSAGE Json的编码格式
@@ -148,7 +145,6 @@ function getDataSetSource_avg() {
                 max = Math.max(max, plotDict[plotDictKey])
             }
             options.visualMap.max = max
-            guangzhouMap.hideLoading()
         }
     })
 }
@@ -161,7 +157,9 @@ function initMap() {
     guangzhouMap.setOption(options)
     guangzhouMap.hideLoading()
     guangzhouMap.on('click', (params) => {
-        emit('guangzhouMap-click', params)
+        let selected = guangzhouMap.getOption().series[0].selectedMap
+        let name = params.name == "广州周边" ? params.name : params.name.slice(0, -1)
+        emit('guangzhouMap-click', [name, selected[params.name]])
     })
     window.addEventListener('resize', () => {
         guangzhouMap.resize()
@@ -173,11 +171,12 @@ watch(options, () => {
   initMap()
 })
 
-watch(graph_info, () => {
+watch(graph_info, async () => {
+    options.dataset.source = []
     if (graph_info.value === "count") {
-        getDataSetSource_count()
+        await getDataSetSource_count()
     } else {
-        getDataSetSource_avg()
+        await getDataSetSource_avg()
     }
 })
 

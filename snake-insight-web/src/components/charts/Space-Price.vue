@@ -6,7 +6,7 @@
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
     type: String,
-    default: '天河'
+    default: ''
   }
 })
 
@@ -44,8 +44,6 @@ const options = reactive({
 })
 
 function getDataSetSource() {
-  // console.log(import.meta.env)
-  // MESSAGE 传递Json格式数据要用POST方法
   $.post({
     url: import.meta.env.VITE_API_BASE_URL + '/plot',
     // MESSAGE Json的编码格式
@@ -53,7 +51,7 @@ function getDataSetSource() {
     async: true,
     // MESSAGE 传递Json格式数据时要用JSON.stringify转字符串
     data: JSON.stringify({
-      "loc": [`广州:${props.region}`],
+      "loc": [`广州${props.region? `:` + props.region: ''}`],
       "x": "space",
       "ys": [["price", "Avg"]],
       "detailed": true
@@ -62,7 +60,11 @@ function getDataSetSource() {
       // MESSAGE 后端返回的格式并不按照SnachResponse的格式返回
       // MESSAGE 所以理论上不要用这个interface
       // console.log(data)
-      options.title.text = `${props.region}区 面积——每平方米价格`
+      if (props.region) {
+        options.title.text = `${props.region}区 面积——每平方米价格`
+      } else {
+        options.title.text = `广州市 面积——每平方米价格`
+      }
       const plotDict = data.plotData[0].value
       options.dataset.source = [['面积', '每平方米价格(元)']]
       // const plotDictKeys = Object.keys(plotDict)

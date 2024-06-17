@@ -6,27 +6,20 @@
       </el-col>
       <el-col :lg="16" :md="14" :sm="24">
         <el-row class="graph-row">
-          <el-col :lg="8" :md="12" :sm="24">
-            <div>
-              <avg-price/>
-            </div>
+          <el-col :md="12" :sm="24">
+              <div>
+                <area-price :region="curRegion"/>
+              </div>
           </el-col>
-          <el-col :lg="8" :md="12" :sm="24">
+          <el-col :md="12" :sm="24">
             <!-- TODO: 获取选择区域-->
             <div>
               <space-price :region="curRegion"/>
             </div>
           </el-col>
-          <el-col :lg="8" :md="12" :sm="24">
-            <el-scrollbar height="40vh">
-              <div>
-                <area-price :region="curRegion"/>
-              </div>
-            </el-scrollbar>
-          </el-col>
         </el-row>
         <el-row class="graph-row">
-          <el-col :lg="24" :md="24" :sm="24">
+          <el-col :span="24">
             <div>
               <room-amount-price :region="curRegion"/>
             </div>
@@ -59,11 +52,15 @@
 </template>
 
 <script setup>
-const curRegion = ref('白云')
+const curRegion = ref('')
 
 function changeRegion(region) {
   // console.log(region)
-  curRegion.value = region.name.slice(0, -1)
+  if(region[1] == true) {
+    curRegion.value = region[0]
+  } else {
+    curRegion.value = ''
+  }
   // console.log(curRegion.value)
 }
 </script>

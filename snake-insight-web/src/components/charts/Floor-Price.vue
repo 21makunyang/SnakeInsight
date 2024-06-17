@@ -7,7 +7,7 @@ let plot: any = null
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
     type: String,
-    default: '天河'
+    default: ''
   },
   has_elevator: {
     type: Boolean,
@@ -93,7 +93,11 @@ function getDataSetSource() {
       const plotDict = data.data
       const plotDictKeys = Object.keys(plotDict)
       const sortedKeys = plotDictKeys.sort((a, b) => Number(a) - Number(b))
-      options.title.text = `${props.region}区 楼层(${props.has_elevator ? '有电梯' : '无电梯'})——每平方米价格`
+      if (props.region){
+        options.title.text = `${props.region}区 楼层(${props.has_elevator ? '有电梯' : '无电梯'})——每平方米价格`
+      }else {
+        options.title.text = `广州市 楼层(${props.has_elevator ? '有电梯' : '无电梯'})——每平方米价格`
+      }
       options.dataset.source = [['楼层', '每平方米最低价(元)', '平均每平方米价格(元)', '每平方米最高价(元)', '统计数量']]
       let width = 60
       for (const plotDictKey of sortedKeys) {

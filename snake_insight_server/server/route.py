@@ -86,7 +86,7 @@ def get_room_price():
 @app.route('/getAreaPrice', methods=["GET", "POST"])
 def get_area_price():
     params = request.json
-    region = params.get("region", "天河")
+    region = params.get("region", "")
     logger.info(region)
     raw_response = {}
     res = filter.get_area_price(region)
@@ -103,7 +103,7 @@ def get_area_price():
 @app.route('/getFloorPrice', methods=["GET", "POST"])
 def getFloorPrice():
     params = request.json
-    region = params.get("region", "天河")
+    region = params.get("region", "")
     require_elevator = bool(params.get("require_elevator", False))
     logger.info(region)
     raw_response = {}

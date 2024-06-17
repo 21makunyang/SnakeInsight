@@ -6,14 +6,14 @@
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
     type: String,
-    default: '天河'
+    default: ''
   }
 })
 let boxPrice: any = undefined
 let dataAxisTitle: string[] = []
 const options = reactive({
   title: {
-    text: `${props.region}区 各区域价格箱型图`
+    text: `各区域价格箱型图`
   },
   tooltip: {
     trigger: 'item',
@@ -70,7 +70,7 @@ const options = reactive({
     {
       name: '离群值',
       type: 'scatter',
-      encode: {x: 0, y: 1},
+      encode: { x: 0, y: 1 },
       datasetIndex: 2
     }
   ],
@@ -87,6 +87,33 @@ const options = reactive({
 })
 
 function getDataSetSource() {
+  if (!props.region) {
+    $.post({
+      url: import.meta.env.VITE_API_BASE_URL + '/plot',
+      contentType: 'application/json',
+      async: true,
+      data: JSON.stringify({
+        "loc": [`广州`],
+        "x": "region",
+        "ys": [["price", "Raw", true]],
+        "detailed": true
+      }),
+      success: (data: any) => {
+        options.title.text = `广州市 各区域价格箱型图`
+
+        let plotData = data['plotData'][0]['value']
+        console.log(plotData)
+        options.dataset[0].source = []
+        dataAxisTitle = []
+        for (const point of plotData) {
+          let x: string = point[0], y: Array<number> = point[1]
+          dataAxisTitle.push(x)
+          options.dataset[0].source.push(y)
+        }
+      }
+    })
+    return
+  }
   $.post({
     url: import.meta.env.VITE_API_BASE_URL + '/plot',
     contentType: 'application/json',

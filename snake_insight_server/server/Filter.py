@@ -10,25 +10,28 @@ class Filter(object):
     # redis = RedisCommand(host='10.242.91.125')
     redis = RedisCommand(db=1)
     city_infos = []
-    last_region = ''
+    last_region = '下北泽'
     predict_base = {}
     count = 0
     area_dic = set()
-    def __init__(self, region=None):
+    def __init__(self, region=""):
         self.get_city_info_by_area(region)
         # self.app = Flask(__name__)
-    def __init_before_process(self, region=None):
-        if region is None:
-            region = self.last_region
+    def __init_before_process(self, region=""):
+        # if region is None:
+        #     region = self.last_region
 
         self.get_city_info_by_area(region)
 
     def get_city_info_by_area(self, region):
-        if region is None or region == self.last_region:
+        if region == self.last_region:
             return self.city_infos
 
         self.city_infos = []
-        house_info_keys = self.redis.smembers(region)
+        if region == "":
+            house_info_keys = self.redis.scan(match=None, _type='HASH')
+        else:
+            house_info_keys = self.redis.smembers(region)
 
         # 使用pineline将指令一起发送可以从70秒降低到3秒
         with self.redis.pipeline(transaction=False) as p:
@@ -59,7 +62,7 @@ class Filter(object):
         self.last_region = region
         return self.city_infos
 
-    def get_room_price(self, region=None):
+    def get_room_price(self, region=""):
         """
         厅室数量-价格
         """
@@ -91,7 +94,7 @@ class Filter(object):
 
         return statisticians_result
 
-    def get_floor_price(self, require_elevator=False,region=None):
+    def get_floor_price(self, require_elevator=False,region=""):
         """
         （有无电梯）楼层——每平方米价格（柱状图）
         """
@@ -142,7 +145,7 @@ class Filter(object):
 
         return statisticians_result
 
-    def get_space_price_per_square(self, region=None):
+    def get_space_price_per_square(self, region=""):
         """
         面积-每平方米价格
         """
@@ -176,7 +179,7 @@ class Filter(object):
 
         return statisticians_result
 
-    def get_area_price(self, region=None):
+    def get_area_price(self, region=""):
         """
         区域各地段平均价格
         """
