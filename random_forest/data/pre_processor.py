@@ -5,8 +5,9 @@ from random_forest.utils.place_code import region_code, area_code
 
 
 class PreProcessor(object):
-    def __init__(self):
+    def __init__(self, target_name='price'):
         self.level_dic = {'低': 1 / 6, '中': 1 / 2, '高': 5 / 6}
+        self.target_name = target_name
 
     def process(self, data):
         house_info_utf8 = {k.decode('utf8'): v.decode('utf8') for k, v in data.items()}
@@ -35,8 +36,10 @@ class PreProcessor(object):
         bedroom = house_info_utf8.get('bedroom')
         price = float(house_info_utf8.get('price'))
         space = float(house_info_utf8.get('space'))
-
-        return [area, region, floor, has_elevator, living_room, bedroom, space], price
+        if self.target_name == 'price':
+            return [area, region, floor, has_elevator, living_room, bedroom, space], price
+        else:
+            return [area, region, floor, has_elevator, living_room, bedroom, price], space
 
     def get_floor(self, floor_info):
         if floor_info == '':

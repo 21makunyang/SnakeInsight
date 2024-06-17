@@ -5,11 +5,13 @@ from snake_insight_threading.util import RedisCommand
 class DataGenerator(object):
     __redis_pool = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, target_name, *args, **kwargs):
         if DataGenerator.__redis_pool is None:
             DataGenerator.__redis_pool = RedisCommand(**kwargs)
         self.__pattern = "广州:*"
-        self.pre_processor = PreProcessor()
+        self.target_name = target_name
+        self.pre_processor = PreProcessor(target_name=self.target_name)
+
 
     @classmethod
     def init_redis(cls, **kwargs):
