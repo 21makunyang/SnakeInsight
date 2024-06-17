@@ -1,5 +1,5 @@
 <template>
-  <div class="area-price" style="width: 100%;height: 45vh;"></div>
+  <div class="area-price" style="width: 100%;height: 40vh;"></div>
 </template>
 
 <script lang="ts" setup>
@@ -108,7 +108,7 @@ function getDataSetSource() {
 }
 
 function initMap() {
-  let plot = echarts.init($('.area-price').get(0))
+  plot = echarts.init($('.area-price').get(0))
   plot.showLoading()
   plot.setOption(options)
   plot.hideLoading()

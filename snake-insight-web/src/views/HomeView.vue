@@ -1,12 +1,11 @@
 <template>
-  <el-scrollbar height="100vh">
-    <nav-bar/>
-    <el-row>
+  <el-scrollbar height="90vh">
+    <el-row class="graph-row">
       <el-col :lg="8" :md="10" :sm="24" class="map-col">
         <guang-zhou-map @guangzhou-map-click="changeRegion"/>
       </el-col>
       <el-col :lg="16" :md="14" :sm="24">
-        <el-row>
+        <el-row class="graph-row">
           <el-col :lg="8" :md="12" :sm="24">
             <div>
               <avg-price/>
@@ -26,28 +25,29 @@
             </el-scrollbar>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row class="graph-row">
           <el-col :lg="24" :md="24" :sm="24">
             <div>
               <room-amount-price :region="curRegion"/>
             </div>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :lg="8" :md="12" :sm="24">
+        
+      </el-col>
+    </el-row>
+    <el-row class="graph-row">
+          <el-col :md="12" :sm="24">
             <div>
               <floor-price :region="curRegion" :has_elevator="true"/>
             </div>
           </el-col>
-          <el-col :lg="8" :md="12" :sm="24">
+          <el-col :md="12" :sm="24">
             <div>
               <floor-price :region="curRegion" :has_elevator="false"/>
             </div>
           </el-col>
         </el-row>
-      </el-col>
-    </el-row>
-    <el-row style="margin: 20px 0 30px 0">
+    <el-row class="graph-row">
       <el-col :span="20" :offset="2">
         <div>
           <box-price :region="curRegion"></box-price>
@@ -73,4 +73,7 @@ function changeRegion(region) {
   margin: 0 40px;
   height: 640px;
 } */
+.graph-row {
+  margin: 20px 20px;
+}
 </style>
