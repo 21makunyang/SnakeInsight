@@ -14,10 +14,14 @@
   </el-scrollbar>
 </template>
 <script setup lang="ts">
-const curRegion = ref('白云')
+const curRegion = ref('')
 function changeRegion(region) {
   // console.log(region)
-  curRegion.value = region.name.slice(0, -1)
+  if(region[1] == true) {
+    curRegion.value = region[0]
+  } else {
+    curRegion.value = ''
+  }
   // console.log(curRegion.value)
 }
 </script>
