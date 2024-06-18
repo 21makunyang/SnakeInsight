@@ -9,18 +9,33 @@ from snake_insight_threading.classes.HouseInfo import HouseInfo
 from snake_insight_threading.common import STOP_SIGNAL
 
 
-def _do_process(*args):
-    newHouseInfo = []
-    for h in args:
-        if float(h.get('space')) < 1.0:
+def _process_house_info(task: Task) -> list[HouseInfo]:
+    assert isinstance(task.target, list)
+    processed_house_info: list[HouseInfo] = []
+    hi: HouseInfo
+    for hi in task.target:
+        if hi.space < 1.0:
+            logger.debug(f'{hi} filtered. Reason: "space({hi.space}) < 1.0"')
             continue
-        newHouseInfo.append(h)
-    return newHouseInfo
+        elif hi.floor == '':
+            logger.debug(f'{hi} filtered. Reason: "floor is empty"')
+            continue
+        elif hi.advertisement == 'True':
+            logger.debug(f'{hi} filtered. Reason: "advertisement({hi.advertisement}) == True"')
+            continue
+        processed_house_info.append(hi)
+    return processed_house_info
 
 
-def do_process(task: Task) -> list[HouseInfo]:
-    task.target = _do_process(task.target)
-    return task.target
+def _do_process(task: Task) -> list[HouseInfo | Task]:
+    if task.parser == 'Parser.HouseInfo':
+        return _process_house_info(task=task)
+    else:
+        return task.target
+
+
+def do_process(task: Task) -> list[HouseInfo | Task]:
+    return _do_process(task)
 
 
 class Processor(threading.Thread):
@@ -40,7 +55,8 @@ class Processor(threading.Thread):
                 self.stop()
                 break
             self.work()
-            do_process(task)
+            result = do_process(task)
+            task.target = result
             self.out_queue.put(task)
             self.free()
 

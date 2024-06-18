@@ -76,16 +76,20 @@ class Controller(threading.Thread):
                     else:
                         task.retry()
                         self.task_queue.put(task)
+                    continue
                 if isinstance(task.target, list):
                     self.task_bit_map.complete(task=task)
+                    write_count = 0
                     for sub_target in task.target:
                         if isinstance(sub_target, Task):
                             self.add_task(task=sub_target)
                         elif isinstance(sub_target, HouseInfo):
                             self.history[sub_target.id] = sub_target.__dict__
                             self.redis.hset(sub_target)
+                            write_count += 1
                         else:
                             logger.warning(f'Unexpected task.target.item type: {type(task.target)}')
+                    logger.info(f'Write {write_count} data(s) to redis[0]')
                 else:
                     logger.warning(f'Unexpected task.target type: {type(task)}')
 
@@ -103,6 +107,6 @@ class Controller(threading.Thread):
                     self.prepare_stop = True
 
     def stop(self):
-        with open(f'../log/history_{int(time.time())}.json', 'w+') as jf:
+        with open(f'log/history_{int(time.time())}.json', 'w+') as jf:
             json.dump(self.history, jf)
         logger.info('Controller stopped.')
