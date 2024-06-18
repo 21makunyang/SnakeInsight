@@ -102,8 +102,7 @@ def _parse_area_url(task: Task, *, page_limit: int = None) -> list[Task]:
 
 def _do_parse(task: Task, *, page_limit: int) -> list[HouseInfo | Task]:
     if task.parser == 'Parser.HouseInfo':
-        parsed_list = _parse_house_info(task=task)
-        return parsed_list
+        return _parse_house_info(task=task)
     elif task.parser == 'Parser.RegionUrlTask':
         return _parse_region_url(task=task, page_limit=page_limit)
     elif task.parser == 'Parser.AreaUrlTask':
