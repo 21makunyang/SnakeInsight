@@ -11,6 +11,7 @@ from flask import Flask, request, make_response
 
 from snake_insight_threading.common import PredictByType
 from random_forest import space_random_forest, price_random_forest
+
 app = Flask(__name__)
 filter = Filter()
 
@@ -128,6 +129,7 @@ def getFloorPrice():
 
 @app.route('/getPrediction', methods=["GET", "POST"])
 def getPrediction():
+    # 获取参数信息
     params = request.json
     price = params.get("price", 0)
     space = params.get("space", 0)
@@ -143,15 +145,14 @@ def getPrediction():
 
     logger.info(
         f'region: {region}, predict_by_type: {predict_by_type}, has_elevator: {has_elevator}, floor: {floor}, area: {area} living_room: {living_room}, bed_room: {bedroom}, price: {price}, space: {space},')
+    # 预测
     raw_response = {}
-    res = filter.predict(region=region, area=area, floor=floor, has_elevator=has_elevator, living_room=living_room,
-                         bedroom=bedroom, predict_by_type=predict_by_type,
-                         value=price if predict_by_type == 0 else space)
-    X = []
     if predict_by_type == PredictByType.PRICE.value:
+        # 预测面积
         X = [area, region, floor, has_elevator, living_room, bedroom, space]
         res = space_random_forest.predict([X])[0]
     else:
+        # 预期价格
         X = [area, region, floor, has_elevator, living_room, bedroom, price]
         res = price_random_forest.predict([X])[0]
 
