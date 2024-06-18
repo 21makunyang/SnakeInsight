@@ -1,12 +1,16 @@
 import json
+import pickle
 import time
 
 from loguru import logger
 
+from random_forest.utils.place_code import region_code, area_code
 from snake_insight_server.server import request, make_response, Filter
 from snake_insight_server.classes import Query, Calculator
 from flask import Flask, request, make_response
 
+from snake_insight_threading.common import PredictByType
+from random_forest import space_random_forest, price_random_forest
 app = Flask(__name__)
 filter = Filter()
 
@@ -83,6 +87,7 @@ def get_room_price():
     responce.mimetype = 'application/json'
     return responce
 
+
 @app.route('/getAreaPrice', methods=["GET", "POST"])
 def get_area_price():
     params = request.json
@@ -100,6 +105,7 @@ def get_area_price():
     responce.mimetype = 'application/json'
     return responce
 
+
 @app.route('/getFloorPrice', methods=["GET", "POST"])
 def getFloorPrice():
     params = request.json
@@ -115,9 +121,10 @@ def getFloorPrice():
         v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
-    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
-    responce.mimetype = 'application/json'
-    return responce
+    response = make_response(json.dumps(raw_response, ensure_ascii=False))
+    response.mimetype = 'application/json'
+    return response
+
 
 @app.route('/getPrediction', methods=["GET", "POST"])
 def getPrediction():
@@ -125,19 +132,32 @@ def getPrediction():
     price = params.get("price", 0)
     space = params.get("space", 0)
     region = params.get("region", "天河")
-    area = params.get("area", 0)
+    region = region_code.get(region, -1)
+    area = params.get("area", '天河大道')
+    area = area_code.get(area, -1)
     living_room = params.get("living_room", 0)
     bedroom = params.get("bedroom", 0)
     predict_by_type = params.get("predict_by_type", 0)
     floor = params.get("floor", 0)
     has_elevator = bool(params.get("has_elevator", False))
-    logger.info(f'region: {region}, predict_by_type: {predict_by_type}, has_elevator: {has_elevator}, floor: {floor}, area: {area} living_room: {living_room}, bed_room: {bedroom}, price: {price}, space: {space},')
+
+    logger.info(
+        f'region: {region}, predict_by_type: {predict_by_type}, has_elevator: {has_elevator}, floor: {floor}, area: {area} living_room: {living_room}, bed_room: {bedroom}, price: {price}, space: {space},')
     raw_response = {}
-    res = filter.predict(region=region, area=area, floor=floor, has_elevator=has_elevator, living_room=living_room, bedroom=bedroom, predict_by_type=predict_by_type, value=price if predict_by_type == 0 else space)
-    processed_res = {"prediction": res}
-    processed_res["req"] = params
+    res = filter.predict(region=region, area=area, floor=floor, has_elevator=has_elevator, living_room=living_room,
+                         bedroom=bedroom, predict_by_type=predict_by_type,
+                         value=price if predict_by_type == 0 else space)
+    X = []
+    if predict_by_type == PredictByType.PRICE.value:
+        X = [area, region, floor, has_elevator, living_room, bedroom, space]
+        res = space_random_forest.predict([X])[0]
+    else:
+        X = [area, region, floor, has_elevator, living_room, bedroom, price]
+        res = price_random_forest.predict([X])[0]
+
+    processed_res = {"prediction": res, "req": params}
 
     raw_response["data"] = processed_res
-    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
-    responce.mimetype = 'application/json'
-    return responce
+    response = make_response(json.dumps(raw_response, ensure_ascii=False))
+    response.mimetype = 'application/json'
+    return response

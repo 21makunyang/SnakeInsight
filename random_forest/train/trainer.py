@@ -35,9 +35,9 @@ class Trainer(object):
 
 
 if __name__ == '__main__':
-    # trainer = Trainer('price')
+    trainer = Trainer('price')
     # trainer.train()
-    # trainer.test()
+    trainer.test()
     trainer = Trainer('space')
-    trainer.train()
+    # trainer.train()
     trainer.test()
