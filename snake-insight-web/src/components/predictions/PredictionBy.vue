@@ -3,13 +3,13 @@
     label-width="100px">
     <el-form-item label="预算月租" prop="price" v-if="props.predict_by_type === 0">
       <div style="display:flex;">
-        <el-input-number v-model.number="req.price"/>
+        <el-input-number v-model.number="req.price" :min="0"/>
         <span style="margin-left: 10px;">元</span>
       </div>
     </el-form-item>
     <el-form-item label="租房面积" prop="space" v-else>
       <div style="display:flex;">
-        <el-input-number v-model.number="req.space"/>
+        <el-input-number v-model.number="req.space" :min="0"/>
         <span style="margin-left: 10px;">㎡</span>
       </div>
     </el-form-item>
@@ -33,7 +33,7 @@
     </el-form-item>
     <el-form-item label="租房楼层" prop="floor">
       <div style="display: flex;">
-        <el-input v-model.number="req.floor" placeholder="请输入租房楼层" />
+        <el-input-number v-model.number="req.floor"/>
         <span style="margin-left: 10px;">层</span>
       </div>
     </el-form-item>
@@ -43,8 +43,8 @@
 
     <el-form-item label="户型规格" prop="bedroom">
       <div style="display: flex;">
-        <el-input-number v-model.number="req.bedroom" /><span style="margin: 0 10px;">室</span>
-        <el-input-number v-model.number="req.living_room" /><span style="margin-left: 10px;">厅</span>
+        <el-input-number v-model.number="req.bedroom" :min="0"/><span style="margin: 0 10px;">室</span>
+        <el-input-number v-model.number="req.living_room" :min="0"/><span style="margin-left: 10px;">厅</span>
       </div>
     </el-form-item>
   </el-form>
