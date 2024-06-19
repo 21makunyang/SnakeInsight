@@ -14,7 +14,7 @@
   </el-scrollbar>
 </template>
 <script setup lang="ts">
-const curRegion = ref('白云')
+const curRegion = ref('')
 function changeRegion(region) {
   // console.log(region)
   if(region[1] == true) {
