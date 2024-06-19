@@ -1,5 +1,5 @@
 <template>
-  <el-form :rules="editRules" ref="predictionFormRef" :model="req" class="prediction-form" label-position="right"
+  <el-form :rules="editRules" ref="predictionFormRef" :model="req" class="prediction-form" label-position="left"
     label-width="100px">
     <el-form-item label="预算月租" prop="price" v-if="props.predict_by_type === 0">
       <div style="display:flex;">
