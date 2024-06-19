@@ -2,7 +2,7 @@
   <el-scrollbar height="90vh">
     <el-row class="graph-row">
       <el-col :lg="8" :md="10" :sm="24" class="map-col">
-        <guang-zhou-map graph_info_mode="avg-price" @guangzhou-map-click="changeRegion"/>
+        <guang-zhou-map graph_info_mode="avg-price" @area-selected="changeRegion"/>
       </el-col>
       <el-col :lg="16" :md="24" :sm="24" class="prediction-col">
         <!--预测方式：0-价格，1-面积 -->
