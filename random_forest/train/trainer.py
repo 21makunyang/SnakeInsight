@@ -12,7 +12,8 @@ class Trainer(object):
     def train(self):
         data_generator = DataGenerator(target_name=self.target_name, db=1)
         # 随机森林回归器
-        clf = RandomForestRegressor(n_estimators=100, random_state=0)
+        # clf = RandomForestRegressor(n_estimators=100, random_state=0)
+        clf = RandomForestRegressor(n_estimators=100, max_depth=None, min_samples_split=2)
         X, y = data_generator.generate_data()
         # 拟合数据集
         clf.fit(X, y)
@@ -36,8 +37,8 @@ class Trainer(object):
 
 if __name__ == '__main__':
     trainer = Trainer('price')
-    # trainer.train()
+    trainer.train()
     trainer.test()
     trainer = Trainer('space')
-    # trainer.train()
+    trainer.train()
     trainer.test()

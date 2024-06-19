@@ -26,7 +26,7 @@ class Filter(object):
     def get_city_info_by_area(self, region):
         if region == self.last_region:
             return self.city_infos
-
+        self.area_dic = set()
         self.city_infos = []
         if region == "":
             house_info_keys = self.redis.scan(match=None, _type='HASH')
@@ -106,7 +106,6 @@ class Filter(object):
             floor = house_info.get('floor')
             if floor is None or floor == '':
                 self.count+=1
-                print(f"floor is None {self.count}")
                 continue
             has_elevator = house_info.get('has_elevator')
             if (require_elevator and not has_elevator) or (not require_elevator and has_elevator):
@@ -297,6 +296,9 @@ class Filter(object):
         price_list = [float(info.get('price')) for info in self.city_infos if info.get('price') is not None]
         return sum(price_list) / len(price_list)
 
+    def get_area_by_region(self, region):
+        self.__init_before_process(region)
+        return list(self.area_dic)
 
 
 if __name__ == "__main__":

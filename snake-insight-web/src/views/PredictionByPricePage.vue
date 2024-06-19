@@ -6,7 +6,7 @@
       </el-col>
       <el-col :lg="16" :md="24" :sm="24" class="prediction-col">
         <!--预测方式：0-价格，1-面积 -->
-        <prediction-by :region="curRegion" :predict_by_type="1"/>
+        <prediction-by :region="curRegion" :predict_by_type="0"/>
       </el-col>
     </el-row>
 

@@ -102,9 +102,9 @@ def get_area_price():
         v[0] = round(v[0] * 100) / 100
 
     raw_response["data"] = processed_res
-    responce = make_response(json.dumps(raw_response, ensure_ascii=False))
-    responce.mimetype = 'application/json'
-    return responce
+    response = make_response(json.dumps(raw_response, ensure_ascii=False))
+    response.mimetype = 'application/json'
+    return response
 
 
 @app.route('/getFloorPrice', methods=["GET", "POST"])
@@ -157,6 +157,21 @@ def getPrediction():
         res = price_random_forest.predict([X])[0]
 
     processed_res = {"prediction": res, "req": params}
+
+    raw_response["data"] = processed_res
+    response = make_response(json.dumps(raw_response, ensure_ascii=False))
+    response.mimetype = 'application/json'
+    return response
+
+
+@app.route('/getAreaByRegion', methods=["GET", "POST"])
+def get_area_by_region():
+    params = request.json
+    region = params.get("region", "")
+    logger.info(region)
+    raw_response = {}
+    res = filter.get_area_by_region(region)
+    processed_res = {"areas": res, "region": region}
 
     raw_response["data"] = processed_res
     response = make_response(json.dumps(raw_response, ensure_ascii=False))
