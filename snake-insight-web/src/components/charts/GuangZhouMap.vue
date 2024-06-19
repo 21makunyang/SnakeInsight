@@ -1,5 +1,5 @@
 <template>
-    <el-radio-group v-model="graph_info" >
+    <el-radio-group v-model="graph_info_mode" >
       <el-radio-button label="出租房数量（套）" value="count" />
       <el-radio-button label="平均价格（元）" value="avg-price" />
     </el-radio-group>
@@ -8,8 +8,14 @@
 
 <script lang="ts" setup>
 import guangzhou from '@/json/geojson/440100.json'
-const emit = defineEmits(['guangzhouMap-click'])
-const graph_info = ref("count")
+const emit = defineEmits(['area-selected'])
+const props = defineProps({
+    graph_info_mode: {
+        type: String,
+        default: 'count'
+    }
+})
+const graph_info_mode = ref(props.graph_info_mode)
 let guangzhouMap: any = undefined
 const options = reactive(
     {
@@ -159,7 +165,7 @@ function initMap() {
     guangzhouMap.on('click', (params) => {
         let selected = guangzhouMap.getOption().series[0].selectedMap
         let name = params.name == "广州周边" ? params.name : params.name.slice(0, -1)
-        emit('guangzhouMap-click', [name, selected[params.name]])
+        emit('area-selected', [name, selected[params.name]])
     })
     window.addEventListener('resize', () => {
         guangzhouMap.resize()
@@ -171,9 +177,9 @@ watch(options, () => {
   initMap()
 })
 
-watch(graph_info, async () => {
+watch(graph_info_mode, async () => {
     options.dataset.source = []
-    if (graph_info.value === "count") {
+    if (graph_info_mode.value === "count") {
         await getDataSetSource_count()
     } else {
         await getDataSetSource_avg()
@@ -183,7 +189,7 @@ watch(graph_info, async () => {
 onMounted(() => {
   setTimeout(() => {
     initMap()
-    if (graph_info.value === "count") {
+    if (graph_info_mode.value === "count") {
         getDataSetSource_count()
     } else {
         getDataSetSource_avg()

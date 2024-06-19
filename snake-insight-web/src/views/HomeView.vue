@@ -2,7 +2,7 @@
   <el-scrollbar height="90vh">
     <el-row class="graph-row">
       <el-col :lg="8" :md="10" :sm="24" class="map-col">
-        <guang-zhou-map @guangzhou-map-click="changeRegion"/>
+        <guang-zhou-map @area-selected="changeRegion"/>
       </el-col>
       <el-col :lg="16" :md="14" :sm="24">
         <el-row class="graph-row">

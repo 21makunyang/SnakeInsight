@@ -1,101 +1,72 @@
 <template>
-  <el-form :rules="editRules" ref="predictionFormRef" :model="req" class="prediction-form">
-    <el-form-item label="租房价格" prop="price" v-if="props.predict_by_type === 0">
-      <el-input v-model.number="req.price" placeholder="请输入租房价格"/>
+  <el-form :rules="editRules" ref="predictionFormRef" :model="req" class="prediction-form" label-position="right"
+    label-width="100px">
+    <el-form-item label="预算月租" prop="price" v-if="props.predict_by_type === 0">
+      <div style="display:flex;">
+        <el-input-number v-model.number="req.price"/>
+        <span style="margin-left: 10px;">元</span>
+      </div>
     </el-form-item>
     <el-form-item label="租房面积" prop="space" v-else>
-      <el-input v-model.number="req.space" placeholder="请输入租房面积"/>
+      <div style="display:flex;">
+        <el-input-number v-model.number="req.space"/>
+        <span style="margin-left: 10px;">㎡</span>
+      </div>
     </el-form-item>
     <el-form-item label="位置">
-      <el-select
-          class="contribute-to-selection"
-          v-model="props.region"
-          filterable
-          reserve-keyword
-          placeholder="请输入区划"
-          no-data-text="暂无匹配的区"
-          no-match-text="暂无匹配的区"
-          default-first-option
-          remote-show-suffix
-          style="width: 240px"
-      >
-        <el-option
-            v-for="item in regionSelector.options"
-            :key="item"
-            :label="item"
-            :value="item"
-        >
-          <span style="float: left">{{ item }}</span>
-        </el-option>
-        <template #loading>
-          <svg class="circular" viewBox="0 0 50 50">
-            <circle class="path" cx="25" cy="25" r="20" fill="none"/>
-          </svg>
-        </template>
-      </el-select>
-      <el-select
-          class="contribute-to-selection"
-          v-model="req.area"
-          filterable
-          reserve-keyword
-          placeholder="请输入地段"
-          no-data-text="暂无匹配的地段"
-          no-match-text="暂无匹配的地段"
-          default-first-option
-          remote-show-suffix
-          style="width: 240px"
-      >
-        <el-option
-            v-for="item in areaSelector.options"
-            :key="item"
-            :label="item"
-            :value="item"
-        >
-          <span style="float: left">{{ item }}</span>
-        </el-option>
-        <template #loading>
-          <svg class="circular" viewBox="0 0 50 50">
-            <circle class="path" cx="25" cy="25" r="20" fill="none"/>
-          </svg>
-        </template>
-      </el-select>
+      <div style="display: flex;">
+        <el-input class="contribute-to-selection" v-model="props.region" placeholder="全市" remote-show-suffix disabled>
+        </el-input><span style="margin-left: 10px;">区</span>
+        <el-select class="contribute-to-selection" v-model="req.area" filterable reserve-keyword placeholder="全区"
+          no-data-text="暂无匹配的地段" no-match-text="暂无匹配的地段" default-first-option remote-show-suffix
+          style="margin-left: 10px;">
+          <el-option v-for="item in areaSelector.options" :key="item" :label="item" :value="item">
+            <span style="float: left">{{ item }}</span>
+          </el-option>
+          <template #loading>
+            <svg class="circular" viewBox="0 0 50 50">
+              <circle class="path" cx="25" cy="25" r="20" fill="none" />
+            </svg>
+          </template>
+        </el-select>
+      </div>
     </el-form-item>
     <el-form-item label="租房楼层" prop="floor">
-      <el-input v-model.number="req.floor" placeholder="请输入租房楼层"/>
+      <div style="display: flex;">
+        <el-input v-model.number="req.floor" placeholder="请输入租房楼层" />
+        <span style="margin-left: 10px;">层</span>
+      </div>
     </el-form-item>
     <el-form-item label="是否有电梯" prop="has_elevator">
-      <el-switch v-model="req.has_elevator"/>
+      <el-switch v-model="req.has_elevator" />
     </el-form-item>
 
-    <div class="room-type"><span>户型</span></div>
-    <el-form-item label="房间数量" prop="bedroom">
-      <el-input v-model.number="req.bedroom" placeholder="请输入房间数量"/>
-    </el-form-item>
-    <el-form-item label="起居室数量" prop="living_room">
-      <el-input v-model.number="req.living_room" placeholder="请输入起居室数量"/>
+    <el-form-item label="户型规格" prop="bedroom">
+      <div style="display: flex;">
+        <el-input-number v-model.number="req.bedroom" /><span style="margin: 0 10px;">室</span>
+        <el-input-number v-model.number="req.living_room" /><span style="margin-left: 10px;">厅</span>
+      </div>
     </el-form-item>
   </el-form>
 
   <el-row>
-    <el-col :lg="2" :md="2" :sm="2">
-      <el-button type="primary" @click="handlePredictClicked">预测</el-button>
-    </el-col>
-    <el-col :lg="8" :md="8" :sm="8">
-      <el-input class="result-text" v-model="predictionRes"/>
-    </el-col>
-    <el-col :lg="8" :md="8" :sm="8"><span class="unit-text">{{ unit }}</span></el-col>
+    <div style="display: flex;align-items: center;">
+      <el-button type="primary" @click="handlePredictClicked" style="width: 80px; margin: 0 12px 0 26px;">预测</el-button>
+      <el-input class="result-text" v-model="predictionRes" />
+      <span>{{ unit }}</span>
+    </div>
   </el-row>
 
 </template>
 <script setup lang="ts">
 
-import type {FormInstance, FormRules} from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 
 const predictionFormRef = ref<FormInstance>()
 const props = defineProps({
   region: { // 区域名称：['海珠', '从化', '南沙', '增城', '天河', '广州周边', '番禺', '白云', '花都', '荔湾', '越秀', '黄埔']
     type: String,
-    default: '天河'
+    default: ''
   },
   predict_by_type: { // 预测方式：0-价格，1-面积
     type: Number,
@@ -108,7 +79,7 @@ const predictionRes = ref()
 const req = reactive({
   price: 0,
   space: 0,
-  area: '沙太北',
+  area: '',
   floor: 0,
   has_elevator: false,
   living_room: 0,
@@ -156,19 +127,19 @@ const bedroomValidator = (rule: any, value: any, callback: any) => {
 }
 const editRules = reactive<FormRules>({
   price: [
-    {validator: priceValidator, trigger: 'blur'},
+    { validator: priceValidator, trigger: 'blur' },
   ],
   space: [
-    {validator: spaceValidator, trigger: 'blur'},
+    { validator: spaceValidator, trigger: 'blur' },
   ],
   floor: [
-    {validator: floorValidator, trigger: 'blur'},
+    { validator: floorValidator, trigger: 'blur' },
   ],
   living_room: [
-    {validator: livingRoomValidator, trigger: 'blur'},
+    { validator: livingRoomValidator, trigger: 'blur' },
   ],
   bedroom: [
-    {validator: bedroomValidator, trigger: 'blur'},
+    { validator: bedroomValidator, trigger: 'blur' },
   ],
 })
 
@@ -248,9 +219,14 @@ onMounted(() => {
 <style scoped>
 .result-text {
   margin-right: 5px;
-  padding-right:5px;
+  padding-right: 5px;
 }
+
 .unit-text {
-  vertical-align:middle
+  vertical-align: middle;
+}
+
+.room-type {
+  margin: 10px;
 }
 </style>
