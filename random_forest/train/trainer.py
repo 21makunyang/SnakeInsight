@@ -10,6 +10,8 @@ from random_forest.data.data_generator import DataGenerator
 """
 需要训练就将random_forest/__init__.py中内容注释掉
 """
+
+
 class Trainer(object):
     def __init__(self, target_name='price'):
         self.target_name = target_name
@@ -25,11 +27,13 @@ class Trainer(object):
 
         # 拟合数据集
         clf.fit(X_train, y_train)
+        # 使用测试集进行测试并输出结果
         y_pred = clf.predict(X_test)
         print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
         print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
         print('Root Mean Squared Error:',
               np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+        print('coefficient R^2:', clf.score(X_test, y_test))
 
         with open(f'../ckpt/random_forest_model_{self.target_name}.pkl', 'wb') as f:
             pickle.dump(clf, f)
