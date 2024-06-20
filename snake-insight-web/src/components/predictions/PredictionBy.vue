@@ -206,7 +206,11 @@ function handlePredictClicked() {
 }
 
 watch(props, () => {
-  getAreaByRegion(props.region)
+  if (props.region) {
+    getAreaByRegion(props.region)
+  } else {
+    areaSelector.options = []
+  }
 })
 onMounted(() => {
   setTimeout(() => {

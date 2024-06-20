@@ -16,7 +16,7 @@
 <script setup lang="ts">
 const curRegion = ref('')
 function changeRegion(region) {
-  // console.log(region)
+  console.log(region)
   if(region[1] == true) {
     curRegion.value = region[0]
   } else {
