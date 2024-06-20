@@ -1,10 +1,15 @@
 import pickle
 
+import numpy as np
+from sklearn import metrics
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
 
 from random_forest.data.data_generator import DataGenerator
 
-
+"""
+需要训练就将random_forest/__init__.py中内容注释掉
+"""
 class Trainer(object):
     def __init__(self, target_name='price'):
         self.target_name = target_name
@@ -15,8 +20,17 @@ class Trainer(object):
         # clf = RandomForestRegressor(n_estimators=100, random_state=0)
         clf = RandomForestRegressor(n_estimators=100, max_depth=None, min_samples_split=2)
         X, y = data_generator.generate_data()
+        print(len(X))
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
         # 拟合数据集
-        clf.fit(X, y)
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
+        print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+        print('Root Mean Squared Error:',
+              np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+
         with open(f'../ckpt/random_forest_model_{self.target_name}.pkl', 'wb') as f:
             pickle.dump(clf, f)
 

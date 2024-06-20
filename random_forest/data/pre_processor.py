@@ -32,8 +32,8 @@ class PreProcessor(object):
 
         area = self.encode_area(house_info_utf8.get('area'))
         region = self.encode_region(house_info_utf8.get('region'))
-        living_room = house_info_utf8.get('living_room')
-        bedroom = house_info_utf8.get('bedroom')
+        living_room = float(house_info_utf8.get('living_room'))
+        bedroom = float(house_info_utf8.get('bedroom'))
         price = float(house_info_utf8.get('price'))
         space = float(house_info_utf8.get('space'))
         if self.target_name == 'price':
