@@ -142,7 +142,6 @@ def getPrediction():
     predict_by_type = params.get("predict_by_type", 0)
     floor = params.get("floor", 0)
     has_elevator = bool(params.get("has_elevator", False))
-    has_elevator = 1 if has_elevator else 0
 
     logger.info(
         f'region: {region}, predict_by_type: {predict_by_type}, has_elevator: {has_elevator}, floor: {floor}, area: {area} living_room: {living_room}, bed_room: {bedroom}, price: {price}, space: {space},')
@@ -150,11 +149,11 @@ def getPrediction():
     raw_response = {}
     if predict_by_type == PredictByType.PRICE.value:
         # 预测面积
-        X = [area, region, floor, has_elevator, living_room, bedroom, price]
+        X = [area, region, floor, has_elevator, living_room, bedroom, space]
         res = space_random_forest.predict([X])[0]
     else:
         # 预期价格
-        X = [area, region, floor, has_elevator, living_room, bedroom, space]
+        X = [area, region, floor, has_elevator, living_room, bedroom, price]
         res = price_random_forest.predict([X])[0]
 
     processed_res = {"prediction": res, "req": params}
