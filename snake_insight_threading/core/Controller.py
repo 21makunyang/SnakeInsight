@@ -3,6 +3,7 @@ import queue
 import threading
 import time
 
+import redis
 from loguru import logger
 
 from snake_insight_threading.classes import HouseInfo, TaskBitMap, PagedUrl
@@ -89,7 +90,7 @@ class Controller(threading.Thread):
                             write_count += 1
                         else:
                             logger.warning(f'Unexpected task.target.item type: {type(task.target)}')
-                    logger.info(f'Write {write_count} data(s) to redis[0]')
+                    logger.info(f'Write {write_count} data(s) to redis[{str(self.redis.get_current_db())}].')
                 else:
                     logger.warning(f'Unexpected task.target type: {type(task)}')
 

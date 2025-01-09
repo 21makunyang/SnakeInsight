@@ -6,6 +6,7 @@ from snake_insight_threading.classes import HouseInfo
 class RedisCommand(object):
     def __init__(self, *, host='localhost', port=6379, db=0):
         self.__pool = redis.ConnectionPool(host=host, port=port, db=db, protocol=3)
+        self.db = db
 
     @property
     def redis(self):
@@ -43,3 +44,6 @@ class RedisCommand(object):
 
     def smembers(self, key: str):
         return self.redis.smembers(key)
+
+    def get_current_db(self):
+        return self.db
